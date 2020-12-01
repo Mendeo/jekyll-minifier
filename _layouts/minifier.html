@@ -1,0 +1,92 @@
+{%- assign intactTags = "script pre textarea" | split: " " -%} {%- comment -%} Теги, которые никак не затрагиваются {%- endcomment -%}
+{%- assign spaceTags = "p" | split: " " -%} {%- comment -%} Теги, которые никак не затрагиваются {%- endcomment -%}
+
+{%- assign workTags = intactTags | concat: spaceTags -%}
+{%- comment -%}
+Удаляем комментарии
+{%- endcomment -%}
+{%- assign new_comment_tag = "2e57la4G82XMQr9K" -%}
+{%- assign content = content | replace: "<!--", new_comment_tag | replace: "-->", new_comment_tag -%}
+{%- assign contentArray = content | split: new_comment_tag -%}
+{%- assign content = "" -%}
+{%- for part in contentArray -%}
+	{%- assign mod = forloop.index | modulo: 2 -%}
+	{%- if mod != 0 -%}
+		{%- assign content = content | append: part -%}
+	{%- endif -%}
+{%- endfor -%}
+
+{%- comment -%}
+Ищем строки, в которых есть интактные теги (из массива intactTags) и ничего там не делаем, а делаем в остальных местах
+Также заменяем перенос строк на пробелы в тэгах из массива spaceTags
+Тэги, которые мы ищем должны быть окружены пустыми строками
+{%- endcomment -%}
+{%- for tag in workTags -%}
+	{%- assign what = "<" | append: tag -%}
+	{%- assign how = what | prepend: "
+"-%}
+	{%- assign content = content | replace: what, how -%}
+	{%- assign what = "</" | append: tag | append: ">" -%}
+	{%- assign how = what | append: "
+"-%}
+	{%- assign content = content | replace: what, how -%}
+{%- endfor -%}
+
+{%- assign contentArray = content | split: "
+" -%}
+{%- assign content = "" -%}
+{%- assign excludedTag = "~" -%}
+{%- assign excludedTagIndex = -1 -%}
+{%- for part in contentArray -%}
+	{%- if excludedTag == "~" -%}
+		{%- for tag in workTags -%}
+			{%- assign what = "<" | append: tag -%}
+			{%- assign aux = part | remove: what | size -%}
+			{%- if aux != part.size -%}
+				{%- assign excludedTag = tag -%}
+				{%- assign excludedTagIndex = forloop.index -%}
+				{%- comment -%}Что если закрывающий тег на той же строке? {%- endcomment -%}
+				{%- assign what = "</" | append: excludedTag | append: ">" -%}
+				{%- assign aux = part | remove: what | size -%}
+				{%- if aux != part.size -%}
+					{%- assign excludedTag = "~" -%}
+					{%- assign excludedTagIndex = -1 -%}
+				{%- endif -%}
+				{%- break -%}
+			{%- endif -%}
+		{%- endfor -%}
+		{%- if excludedTag == "~" -%}
+			{%- assign aux = part | strip -%}
+			{%- assign content = content | append: aux -%}
+		{%- else -%}
+			{%- if excludedTagIndex < intactTags.size -%} {%- comment -%} Зашли в интактный тэг {%- endcomment -%}
+				{%- assign aux = part | lstrip | append: "
+"-%}
+				{%- assign content = content | append: aux -%}
+			{%- else -%} {%- comment -%} Зашли в тэг, где переносы строк нужно заменить пробелами {%- endcomment -%}
+				{%- assign aux = part | lstrip | append: " "-%}
+				{%- assign content = content | append: aux -%}
+			{%- endif -%}
+		{%- endif -%}
+	{%- else -%}
+		{%- assign what = "</" | append: excludedTag | append: ">" -%}
+		{%- assign aux = part | remove: what | size -%}
+		{%- if aux != part.size -%}
+			{%- assign excludedTag = "~" -%}
+		{%- endif -%}
+		{%- if excludedTag == "~" -%}
+			{%- assign aux = part | rstrip -%}
+			{%- assign content = content | append: aux -%}
+		{%- else -%}
+			{%- if excludedTagIndex < intactTags.size  -%} {%- comment -%} Зашли в интактный тэг {%- endcomment -%}
+				{%- assign aux = part | append: "
+" -%}
+				{%- assign content = content | append: aux -%}
+			{%- else -%} {%- comment -%} Зашли в тэг, где переносы строк нужно заменить пробелами {%- endcomment -%}
+				{%- assign aux = part | strip | append: " " -%}
+				{%- assign content = content | append: aux -%}
+			{%- endif -%}
+		{%- endif -%}
+	{%- endif -%}
+{%- endfor -%}
+{{ content }}
