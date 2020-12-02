@@ -3,14 +3,11 @@
 " -%}
 {%- assign content = "" -%}
 {%- for part in contentArray -%}
-	{%- assign row = part | split: "//" -%}
-	{%- if row.size == 2 -%}
-		{%- assign content = content | append: row[0] | append: "
+	{%- assign aux = part | remove: "://" | split: "//" -%}
+	{%- assign aux = aux[1] | prepend: "//" -%}
+	{%- assign aux = part | remove: aux -%}
+	{%- assign content = content | append: aux | append: "
 " -%}
-	{%- else -%}
-	{%- assign content = content | append: part | append: "
-" -%}
-	{%- endif -%}
 {%- endfor -%}
 {%- comment -%} Удаляем многострочные комментарии {%- endcomment -%}
 {%- assign new_comment_tag = "2e57la4G82XMQr9K" -%}
