@@ -35,29 +35,29 @@
 {%- assign contentArray = content | split: "
 " -%}
 {%- assign content = "" -%}
-{%- assign excludedTag = "~" -%}
-{%- assign excludedTagIndex = -1 -%}
+{%- assign currentTag = "~" -%}
+{%- assign currentTagIndex = -1 -%}
 {%- for part in contentArray -%}
-	{%- if excludedTag == "~" -%}
+	{%- if currentTag == "~" -%}
 		{%- for tag in workTags -%}
 			{%- assign what = "<" | append: tag | append: " " -%}
 			{%- assign aux1 = part | remove: what | size -%}
 			{%- assign what = "<" | append: tag | append: ">" -%}
 			{%- assign aux2 = part | remove: what | size -%}
 			{%- if aux1 != part.size or aux2 != part.size -%}
-				{%- assign excludedTag = tag -%}
-				{%- assign excludedTagIndex = forloop.index -%}
+				{%- assign currentTag = tag -%}
+				{%- assign currentTagIndex = forloop.index -%}
 				{%- comment -%} Что если закрывающий тег на той же строке? {%- endcomment -%}
-				{%- assign what = "</" | append: excludedTag | append: ">" -%}
+				{%- assign what = "</" | append: currentTag | append: ">" -%}
 				{%- assign aux = part | remove: what | size -%}
 				{%- if aux != part.size -%}
-					{%- assign excludedTag = "~" -%}
-					{%- assign excludedTagIndex = -1 -%}
+					{%- assign currentTag = "~" -%}
+					{%- assign currentTagIndex = -1 -%}
 				{%- endif -%}
 				{%- break -%}
 			{%- endif -%}
 		{%- endfor -%}
-		{%- if excludedTag == "~" -%}
+		{%- if currentTag == "~" -%}
 			{%- assign aux = part | strip | replace: "/>", ">" -%}
 			{%- assign aux_size = aux.size -%}
 			{%- for i in (1 .. 100) -%} {%- comment -%} Удаляем лишние пробелы перед угловыми скобками {%- endcomment -%}
@@ -68,7 +68,7 @@
 			{%- endfor -%}
 			{%- assign content = content | append: aux -%}
 		{%- else -%}
-			{%- if excludedTagIndex < intactTags.size -%} {%- comment -%} Зашли в интактный тэг {%- endcomment -%}
+			{%- if currentTagIndex < intactTags.size -%} {%- comment -%} Зашли в интактный тэг {%- endcomment -%}
 				{%- assign aux = part | lstrip | append: "
 "-%}
 				{%- assign content = content | append: aux -%}
@@ -78,13 +78,13 @@
 			{%- endif -%}
 		{%- endif -%}
 	{%- else -%}
-		{%- assign what = "</" | append: excludedTag | append: ">" -%}
+		{%- assign what = "</" | append: currentTag | append: ">" -%}
 		{%- assign aux = part | remove: what | size -%}
 		{%- if aux != part.size -%}
-			{%- assign excludedTag = "~" -%}
+			{%- assign currentTag = "~" -%}
 		{%- endif -%}
-		{%- if excludedTag == "~" -%}
-			{%- if excludedTagIndex < intactTags.size -%} {%- comment -%} Конец интактного тэга {%- endcomment -%}
+		{%- if currentTag == "~" -%}
+			{%- if currentTagIndex < intactTags.size -%} {%- comment -%} Конец интактного тэга {%- endcomment -%}
 				{%- assign aux = part | rstrip -%}
 				{%- assign content = content | append: aux -%}
 			{%- else -%} {%- comment -%} Зашли в конец тэга, где переносы строк нужно заменить пробелами {%- endcomment -%}
@@ -92,7 +92,7 @@
 				{%- assign content = content | append: aux -%}
 			{%- endif -%}
 		{%- else -%}
-			{%- if excludedTagIndex < intactTags.size -%} {%- comment -%} Зашли в интактный тэг {%- endcomment -%}
+			{%- if currentTagIndex < intactTags.size -%} {%- comment -%} Зашли в интактный тэг {%- endcomment -%}
 				{%- assign aux = part | append: "
 " -%}
 				{%- assign content = content | append: aux -%}
