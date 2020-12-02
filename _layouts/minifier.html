@@ -40,9 +40,11 @@
 {%- for part in contentArray -%}
 	{%- if excludedTag == "~" -%}
 		{%- for tag in workTags -%}
-			{%- assign what = "<" | append: tag -%}
-			{%- assign aux = part | remove: what | size -%}
-			{%- if aux != part.size -%}
+			{%- assign what = "<" | append: tag | append: " " -%}
+			{%- assign aux1 = part | remove: what | size -%}
+			{%- assign what = "<" | append: tag | append: ">" -%}
+			{%- assign aux2 = part | remove: what | size -%}
+			{%- if aux1 != part.size or aux2 != part.size -%}
 				{%- assign excludedTag = tag -%}
 				{%- assign excludedTagIndex = forloop.index -%}
 				{%- comment -%} Что если закрывающий тег на той же строке? {%- endcomment -%}
