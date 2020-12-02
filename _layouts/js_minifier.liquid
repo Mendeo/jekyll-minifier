@@ -46,5 +46,23 @@
 		{%- assign content = content | append: aux -%}
 	{%- endif -%}
 {%- endfor -%}
-
+{%- comment -%} Удаляем пробелы вокруг некоторых символов {%- endcomment -%}
+{%- assign simbols = "= + - / * , % > < : ;" | split: " " -%}
+{%- assign contentArray = content | split: "'" -%}
+{%- assign content = "" -%}
+{%- for part in contentArray -%}
+	{%- assign mod = forloop.index | modulo: 2 -%}
+	{%- assign partModified = "" -%}
+	{%- if mod != 0 -%}
+		{%- for s in simbols -%}
+			{%- assign aux = s | append: " " -%}
+			{%- assign partModified = part | replace: aux, s -%}
+			{%- assign aux1 = s | prepend: " " -%}
+			{%- assign partModified = part | replace: aux, s -%}
+		{%- endfor -%}
+		{%- assign content = content | append: partModified -%}
+	{%- else -%}
+		{%- assign content = content | append: part | append: "'" | prepend: "'" -%}
+	{%- endif -%}
+{%- endfor -%}
 {{ content }}
