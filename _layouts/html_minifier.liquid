@@ -2,9 +2,7 @@
 {%- assign spaceTags = "p" | split: " " -%} {%- comment -%} Теги, внутри которых удаляются отсупы, а переносы строк заменяются пробелами {%- endcomment -%}
 
 {%- assign workTags = intactTags | concat: spaceTags -%}
-{%- comment -%}
-Удаляем комментарии
-{%- endcomment -%}
+{%- comment -%} Удаляем комментарии {%- endcomment -%}
 {%- assign new_comment_tag = "2e57la4G82XMQr9K" -%}
 {%- assign content = content | replace: "<!--", new_comment_tag | replace: "-->", new_comment_tag -%}
 {%- assign contentArray = content | split: new_comment_tag -%}

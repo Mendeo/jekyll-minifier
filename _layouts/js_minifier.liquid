@@ -1,0 +1,48 @@
+{%- comment -%} Удаляем однострочные комментарии {%- endcomment -%}
+{%- assign contentArray = content | split: "
+" -%}
+{%- assign content = "" -%}
+{%- for part in contentArray -%}
+	{%- assign row = part | split: "//" -%}
+	{%- if row.size == 2 -%}
+		{%- assign content = content | append: row[0] | append: "
+" -%}
+	{%- else -%}
+	{%- assign content = content | append: part | append: "
+" -%}
+	{%- endif -%}
+{%- endfor -%}
+{%- comment -%} Удаляем многострочные комментарии {%- endcomment -%}
+{%- assign new_comment_tag = "2e57la4G82XMQr9K" -%}
+{%- assign content = content | replace: "/*", new_comment_tag | replace: "*/", new_comment_tag -%}
+{%- assign contentArray = content | split: new_comment_tag -%}
+{%- assign content = "" -%}
+{%- for part in contentArray -%}
+	{%- assign mod = forloop.index | modulo: 2 -%}
+	{%- if mod != 0 -%}
+		{%- assign content = content | append: part -%}
+	{%- endif -%}
+{%- endfor -%}
+{%- comment -%} Удаляем отступы в тех местах, где не используются многострочные выражения {%- endcomment -%}
+{%- assign new_text_simbol = "2e57la4G82XMQr9K" -%}
+{%- assign content = content | replace: "`", new_text_simbol -%}
+{%- assign contentArray = content | split: new_text_simbol -%}
+{%- assign content = "" -%}
+{%- for part in contentArray -%}
+	{%- assign mod = forloop.index | modulo: 2 -%}
+	{%- if mod != 0 -%}
+		{%- assign auxArr = part | split: "
+" -%}
+		{%- assign aux = "" -%}
+		{%- for row in auxArr -%}
+			{%- assign rowStriped = row | strip -%}
+			{%- assign aux = aux | append: rowStriped -%}
+		{%- endfor -%}
+		{%- assign content = content | append: aux -%}
+	{%- else -%}
+		{%- assign aux = part | prepend: "`" | append: "`" -%}
+		{%- assign content = content | append: aux -%}
+	{%- endif -%}
+{%- endfor -%}
+
+{{ content }}
