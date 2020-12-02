@@ -1,5 +1,5 @@
 {%- assign intactTags = "script pre textarea" | split: " " -%} {%- comment -%} Теги, которые никак не затрагиваются {%- endcomment -%}
-{%- assign spaceTags = "p" | split: " " -%} {%- comment -%} Теги, которые никак не затрагиваются {%- endcomment -%}
+{%- assign spaceTags = "p a li td" | split: " " -%} {%- comment -%} Теги, которые никак не затрагиваются {%- endcomment -%}
 
 {%- assign workTags = intactTags | concat: spaceTags -%}
 {%- comment -%}
@@ -45,7 +45,7 @@
 			{%- if aux != part.size -%}
 				{%- assign excludedTag = tag -%}
 				{%- assign excludedTagIndex = forloop.index -%}
-				{%- comment -%}Что если закрывающий тег на той же строке? {%- endcomment -%}
+				{%- comment -%} Что если закрывающий тег на той же строке? {%- endcomment -%}
 				{%- assign what = "</" | append: excludedTag | append: ">" -%}
 				{%- assign aux = part | remove: what | size -%}
 				{%- if aux != part.size -%}
@@ -64,7 +64,7 @@
 "-%}
 				{%- assign content = content | append: aux -%}
 			{%- else -%} {%- comment -%} Зашли в тэг, где переносы строк нужно заменить пробелами {%- endcomment -%}
-				{%- assign aux = part | lstrip | append: " "-%}
+				{%- assign aux = part | lstrip | append: " " -%}
 				{%- assign content = content | append: aux -%}
 			{%- endif -%}
 		{%- endif -%}
@@ -75,10 +75,15 @@
 			{%- assign excludedTag = "~" -%}
 		{%- endif -%}
 		{%- if excludedTag == "~" -%}
-			{%- assign aux = part | rstrip -%}
-			{%- assign content = content | append: aux -%}
+			{%- if excludedTagIndex < intactTags.size -%} {%- comment -%} Конец интактного тэга {%- endcomment -%}
+				{%- assign aux = part | rstrip -%}
+				{%- assign content = content | append: aux -%}
+			{%- else -%} {%- comment -%} Зашли в конец тэга, где переносы строк нужно заменить пробелами {%- endcomment -%}
+				{%- assign aux = part | strip -%}
+				{%- assign content = content | append: aux -%}
+			{%- endif -%}
 		{%- else -%}
-			{%- if excludedTagIndex < intactTags.size  -%} {%- comment -%} Зашли в интактный тэг {%- endcomment -%}
+			{%- if excludedTagIndex < intactTags.size -%} {%- comment -%} Зашли в интактный тэг {%- endcomment -%}
 				{%- assign aux = part | append: "
 " -%}
 				{%- assign content = content | append: aux -%}

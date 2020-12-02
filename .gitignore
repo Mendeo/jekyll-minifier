@@ -1,0 +1,12 @@
+*.gem
+/_tmp
+.bundle
+.sass-cache
+/_site
+Gemfile.lock
+vendor
+/.jekyll-cache
+*.swp
+*.swo
+*.*~
+/.vscode
