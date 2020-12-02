@@ -1,5 +1,5 @@
 {%- assign intactTags = "script pre textarea" | split: " " -%} {%- comment -%} Теги, которые никак не затрагиваются {%- endcomment -%}
-{%- assign spaceTags = "p a li td" | split: " " -%} {%- comment -%} Теги, которые никак не затрагиваются {%- endcomment -%}
+{%- assign spaceTags = "p a li span td" | split: " " -%} {%- comment -%} Теги, внутри которых удаляются отсупы, а переносы строк заменяются пробелами {%- endcomment -%}
 
 {%- assign workTags = intactTags | concat: spaceTags -%}
 {%- comment -%}
@@ -56,7 +56,14 @@
 			{%- endif -%}
 		{%- endfor -%}
 		{%- if excludedTag == "~" -%}
-			{%- assign aux = part | strip -%}
+			{%- assign aux = part | strip | replace: "/>", ">" -%}
+			{%- assign aux_size = aux.size -%}
+			{%- for i in (1 .. 100) -%} {%- comment -%} Удаляем лишние пробелы перед угловыми скобками {%- endcomment -%}
+				{%- assign aux = aux | replace: " >", ">" -%}
+				{%- if aux_size == aux.size -%}
+					{%- break -%}
+				{%- endif -%}
+			{%- endfor -%}
 			{%- assign content = content | append: aux -%}
 		{%- else -%}
 			{%- if excludedTagIndex < intactTags.size -%} {%- comment -%} Зашли в интактный тэг {%- endcomment -%}
