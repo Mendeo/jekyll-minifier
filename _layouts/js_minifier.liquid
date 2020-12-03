@@ -35,24 +35,11 @@
 {%- assign content = content | replace: "`", aux -%}
 
 {%- assign contentArray = content | split: marker -%}
-{%- assign firstSimbol = content | slice: 1, 1 -%} {%- comment -%} Проверяем начинается ли код со строки {%- endcomment -%}
-{%- assign flag = false -%}
-{%- assign antiFlag = true -%}
-{%- if firstSimbol == '"' or firstSimbol == "'" or firstSimbol == "`" -%}
-	{%- assign flag = true -%}
-	{%- assign antiFlag = false -%}
-{%- endif -%}
 {%- assign content = "" -%}
 {%- assign simbols = "= + - / * , % > < : ; ( ) { }" | split: " " -%} {%- comment -%} Удаляем пробелы вокруг этих символов {%- endcomment -%}
 {%- for part in contentArray -%}
 	{%- assign mod = forloop.index | modulo: 2 -%}
-	{%- assign f = false -%}
-	{%- if mod != 0 and antiFlag -%}
-		{%- assign f = true -%}
-	{%- elsif mod == 0 and flag -%}
-		{%- assign f = true -%}
-	{%- endif -%}
-	{%- if f == true -%}
+	{%- if mod == 1 -%}
 		{%- comment -%} Удаляем табуляции и переносы строк {%- endcomment -%}
 		{%- assign partModified = part | remove: "	" | remove: "
 "-%}
