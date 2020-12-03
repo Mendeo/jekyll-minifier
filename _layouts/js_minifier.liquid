@@ -25,6 +25,13 @@
 		{%- assign content = content | append: part -%}
 	{%- endif -%}
 {%- endfor -%}
+{%- comment -%} Обрабатываем экранированные символы, обозначающие строки в JS {%- endcomment -%}
+{%- assign strMasks = "~!~ @@@@ &ueyyf" | split: " " -%}
+{%- for mask in strMasks -%}
+	{%- assign content = content | replace: "\'", mask -%}
+	{%- assign content = content | replace: '\"', mask -%}
+	{%- assign content = content | replace: "\`", mask -%}
+{%- endfor -%}
 {%- comment -%} Маркируем участки, кода со строками {%- endcomment -%}
 {%- assign marker = "2e57la4G82XMQr9K" -%}
 {%- assign aux = marker | append: '"' -%}
@@ -64,5 +71,10 @@
 	{%- else -%}
 		{%- assign content = content | append: part -%}
 	{%- endif -%}
+{%- endfor -%}
+{%- for mask in strMasks -%}
+	{%- assign content = content | replace: mask, "'" -%}
+	{%- assign content = content | replace: mask, '"' -%}
+	{%- assign content = content | replace: mask, "`" -%}
 {%- endfor -%}
 {{ content }}
