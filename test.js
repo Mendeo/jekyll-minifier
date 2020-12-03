@@ -17,6 +17,7 @@ layout: js_minifier
 	в котором должны сохраниться все переносы строк*/
 	const address = "https://example.com";
 	const addres2 = 'https://example2.com';
+	const str = "I can''t write this";
 
 	foo = 'Это однострочная строка    /* jfiejff */ со спец символами *, ( ) { } тут буквы + ';
 	
