@@ -25,44 +25,57 @@
 		{%- assign content = content | append: part -%}
 	{%- endif -%}
 {%- endfor -%}
-{%- comment -%} Удаляем отступы в тех местах, где не используются многострочные выражения {%- endcomment -%}
-{%- assign new_text_simbol = "2e57la4G82XMQr9K" -%}
-{%- assign content = content | replace: "`", new_text_simbol -%}
-{%- assign contentArray = content | split: new_text_simbol -%}
+{%- comment -%} Маркируем участки, кода со строками {%- endcomment -%}
+{%- assign marker = "~" -%}
+{%- assign aux = marker | append: '"' -%}
+{%- assign content = content | replace: '"', aux -%}
+{%- assign aux = marker | append: "'" -%}
+{%- assign content = content | replace: "'", aux -%}
+{%- assign aux = marker | append: "`" -%}
+{%- assign content = content | replace: "`", aux -%}
+
+{%- assign contentArray = content | split: marker -%}
+{%- assign firstSimbol = content | slice: 1, 1 -%} {%- comment -%} Проверяем начинается ли код со строки {%- endcomment -%}
+{%- assign flag = false -%}
+{%- assign antiFlag = true -%}
+{%- if firstSimbol == '"' or firstSimbol == "'" or firstSimbol == "`" -%}
+	{%- assign flag = true -%}
+	{%- assign antiFlag = false -%}
+{%- endif -%}
 {%- assign content = "" -%}
+{%- assign simbols = "= + - / * , % > < : ; ( ) { }" | split: " " -%} {%- comment -%} Удаляем пробелы вокруг этих символов {%- endcomment -%}
 {%- for part in contentArray -%}
 	{%- assign mod = forloop.index | modulo: 2 -%}
-	{%- if mod != 0 -%}
-		{%- assign auxArr = part | split: "
-" -%}
-		{%- assign aux = "" -%}
-		{%- for row in auxArr -%}
-			{%- assign rowStriped = row | strip -%}
-			{%- assign aux = aux | append: rowStriped -%}
-		{%- endfor -%}
-		{%- assign content = content | append: aux -%}
-	{%- else -%}
-		{%- assign aux = part | prepend: "`" | append: "`" -%}
-		{%- assign content = content | append: aux -%}
+	{%- assign f = false -%}
+	{%- if mod != 0 and antiFlag -%}
+		{%- assign f = true -%}
+	{%- elsif mod == 0 and flag -%}
+		{%- assign f = true -%}
 	{%- endif -%}
-{%- endfor -%}
-{%- comment -%} Удаляем пробелы вокруг некоторых символов {%- endcomment -%}
-{%- assign simbols = "= + - / * , % > < : ;" | split: " " -%}
-{%- assign contentArray = content | split: "'" -%}
-{%- assign content = "" -%}
-{%- for part in contentArray -%}
-	{%- assign mod = forloop.index | modulo: 2 -%}
-	{%- assign partModified = "" -%}
-	{%- if mod != 0 -%}
+	{%- if f == true -%}
+		{%- comment -%} Удаляем табуляции и переносы строк {%- endcomment -%}
+		{%- assign partModified = part | remove: "	" | remove: "
+"-%}
+		{%- comment -%} Удаляем двойные пробелы {%- endcomment -%}
+		{%- assign partModified_size = partModified | size -%}
+		{%- for i in (1 .. 100) -%}
+			{%- assign partModified = partModified | remove: "  " -%}
+			{%- if partModified.size == partModified_size -%}
+				{%- break -%}
+			{%- else -%}
+				{%- assign partModified_size = partModified | size -%}
+			{%- endif -%}
+		{%- endfor -%}
+		{%- comment -%} Удаляем пробелы вокруг символов из simbols {%- endcomment -%}
 		{%- for s in simbols -%}
 			{%- assign aux = s | append: " " -%}
-			{%- assign partModified = part | replace: aux, s -%}
-			{%- assign aux1 = s | prepend: " " -%}
-			{%- assign partModified = part | replace: aux, s -%}
+			{%- assign partModified = partModified | replace: aux, s -%}
+			{%- assign aux = s | prepend: " " -%}
+			{%- assign partModified = partModified | replace: aux, s -%}
 		{%- endfor -%}
 		{%- assign content = content | append: partModified -%}
 	{%- else -%}
-		{%- assign content = content | append: part | append: "'" | prepend: "'" -%}
+		{%- assign content = content | append: part -%}
 	{%- endif -%}
 {%- endfor -%}
 {{ content }}
