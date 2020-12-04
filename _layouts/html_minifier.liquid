@@ -1,4 +1,4 @@
-{%- assign intactTags = "script pre textarea" | split: " " -%} {%- comment -%} Теги, которые никак не затрагиваются {%- endcomment -%}
+{%- assign intactTags = "script pre svg textarea" | split: " " -%} {%- comment -%} Теги, которые никак не затрагиваются {%- endcomment -%}
 {%- assign spaceTags = "p" | split: " " -%} {%- comment -%} Теги, внутри которых удаляются отсупы, а переносы строк заменяются пробелами {%- endcomment -%}
 
 {%- assign workTags = intactTags | concat: spaceTags -%}
