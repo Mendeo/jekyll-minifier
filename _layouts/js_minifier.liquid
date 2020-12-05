@@ -77,4 +77,50 @@
 	{%- assign content = content | replace: mask, '"' -%}
 	{%- assign content = content | replace: mask, "`" -%}
 {%- endfor -%}
+
+{%- comment -%} Начинаем блок замены имён {%- endcomment -%}
+{%- assign newNames = "a b c d e f g h i j k l m n o p q r s t u v w x y z" | split: " " -%}
+{%- assign newNamesIndex = 1 -%}
+{%- comment -%} Замена имён функций {%- endcomment -%}
+{%- assign contentArray = content | split: "function" -%}
+{%- assign names = "" | split: " " -%}
+{%- for part in contentArray offset: 2 -%}
+	{%- assign aux = part | slice: 0, 1 -%}
+	{%- if aux != "(" -%}
+		{%- assign name = part | replace: "(", " " | truncatewords: 1, "" | append: "2e57la4G82XMQr9K" | split: "2e57la4G82XMQr9K" -%}
+		{%- assign names = names | concat: name -%}
+	{%- endif -%}
+{%- endfor -%}
+{%- for name in names-%}
+	{%- assign aux = forloop.index -%}
+	{%- assign nameModified = name | append: "(" -%}
+	{%- assign newName = newNames[aux] | append: "(" -%}
+	{%- assign content = content | replace: nameModified, newName -%}
+	{%- if forloop.last -%}
+		{%- assign newNamesIndex = forloop.length -%}
+	{%- endif -%}
+{%- endfor -%}
+{%- comment -%} Замена имён констант {%- endcomment -%}
+{%- assign contentArray = content | split: "const" -%}
+{%- assign names = "" | split: " " -%}
+{%- for part in contentArray offset: 2 -%}
+	{%- assign aux = part | slice: 0, 1 -%}
+	{%- if aux == " " -%}
+		{%- assign name = part | replace: "=", " " | truncatewords: 1, "" | append: "2e57la4G82XMQr9K" | split: "2e57la4G82XMQr9K" -%}
+		{%- assign names = names | concat: name -%}
+	{%- endif -%}
+{%- endfor -%}
+{%- for name in names-%}
+	{%- assign aux = forloop.index | plus: newNamesIndex -%}
+	{%- assign nameModified = name -%}
+	{%- assign newName = newNames[aux] -%}
+	{%- assign content = content | replace: nameModified, newName -%}
+	{%- if forloop.last -%}
+		{%- assign newNamesIndex = forloop.length | plus: newNamesIndex -%}
+	{%- endif -%}
+{%- endfor -%}
 {{ content }}
+{{ newNamesIndex }}
+
+
+

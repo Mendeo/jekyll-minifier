@@ -11,6 +11,7 @@ layout: js_minifier
 	let bar = { num: 3 - 2   };
 	let baz = { dfg: foo.test , num: 2 };
 	const arr = [foo, bar, baz];
+	console.log(arr  );
 	arr.forEach(s    =>   s.text    =   'Hello "world"');
 		/* Это многострочный
 	комментарий *, ( ) { } // тут буквы + =,
@@ -36,7 +37,22 @@ layout: js_minifier
 		bar: 'test ' +  baz.num,
 		baz: `test ${bazF(   1,   4)}`
 	};
+
+	function tyu()
+	{
+		return bazF(10,   -5);
+	}
 	
+	function ght(x)
+	{
+		return function (y)
+		{
+			return x + y
+		}
+	}
+
 	console.log(asd   );
 	console.log(bazF(   10,   -5));
+	console.log(tyu(   ));
+	console.log(ght(   10)(   5));
 })();
