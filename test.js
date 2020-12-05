@@ -21,7 +21,7 @@ layout: js_minifier
 	const str = "I can\'t write this";
 	console.log(str  );
 
-	foo = 'Это однострочная строка    /* jfiejff */ со спец символами *, ( ) { } тут буквы + ';
+	foo = 'Это однострочная строка    /* jfiejff */ function jrt(wer) со спец символами *, ( ) { } тут буквы + ';
 	
 	foo = `Это многострочный
 	текст, в котором должны *, ( ) { } тут буквы + 
@@ -32,17 +32,17 @@ layout: js_minifier
 		return x   + 4   - t /   2;
 	}
 	
+
+	function tyu(fih)
+	{
+		return fih(10,   -5);
+	}
 	let asd = {
 		foo: "test " + bar.num  ,
 		bar: 'test ' +  baz.num,
-		baz: `test ${bazF(   1,   4)}`
+		baz: `test ${bazF(   1,   4)} - это круто, а ${tyu(bazF)} - не очень`
 	};
 
-	function tyu()
-	{
-		return bazF(10,   -5);
-	}
-	
 	function ght(x)
 	{
 		return function (y)
@@ -53,6 +53,6 @@ layout: js_minifier
 
 	console.log(asd   );
 	console.log(bazF(   10,   -5));
-	console.log(tyu(   ));
+	console.log(tyu(bazF));
 	console.log(ght(   10)(   5));
 })();

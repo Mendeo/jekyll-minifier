@@ -79,48 +79,80 @@
 {%- endfor -%}
 
 {%- comment -%} Начинаем блок замены имён {%- endcomment -%}
-{%- assign newNames = "a b c d e f g h i j k l m n o p q r s t u v w x y z" | split: " " -%}
+{%- assign newNames = "a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z" | split: " " -%}
 {%- assign newNamesIndex = 1 -%}
-{%- comment -%} Замена имён функций {%- endcomment -%}
-{%- assign contentArray = content | split: "function" -%}
-{%- assign names = "" | split: " " -%}
-{%- for part in contentArray offset: 2 -%}
-	{%- assign aux = part | slice: 0, 1 -%}
+
+{%- assign forNamesArray = content | split: "function" -%}
+{%- assign js_functions = "" | split: " " -%}
+{%- for forNamesPart in forNamesArray offset: 2 -%}
+	{%- assign aux = forNamesPart | slice: 0, 1 -%}
 	{%- if aux != "(" -%}
-		{%- assign name = part | replace: "(", " " | truncatewords: 1, "" | append: "2e57la4G82XMQr9K" | split: "2e57la4G82XMQr9K" -%}
-		{%- assign names = names | concat: name -%}
+		{%- assign name = forNamesPart | replace: "(", " " | truncatewords: 1, "" | append: "2e57la4G82XMQr9K" | split: "2e57la4G82XMQr9K" -%}
+		{%- assign js_functions = js_functions | concat: name -%}
 	{%- endif -%}
 {%- endfor -%}
-{%- for name in names-%}
-	{%- assign aux = forloop.index -%}
-	{%- assign nameModified = name | append: "(" -%}
-	{%- assign newName = newNames[aux] | append: "(" -%}
-	{%- assign content = content | replace: nameModified, newName -%}
-	{%- if forloop.last -%}
-		{%- assign newNamesIndex = forloop.length -%}
-	{%- endif -%}
-{%- endfor -%}
-{%- comment -%} Замена имён констант {%- endcomment -%}
-{%- assign contentArray = content | split: "const" -%}
-{%- assign names = "" | split: " " -%}
-{%- for part in contentArray offset: 2 -%}
-	{%- assign aux = part | slice: 0, 1 -%}
-	{%- if aux == " " -%}
-		{%- assign name = part | replace: "=", " " | truncatewords: 1, "" | append: "2e57la4G82XMQr9K" | split: "2e57la4G82XMQr9K" -%}
-		{%- assign names = names | concat: name -%}
-	{%- endif -%}
-{%- endfor -%}
-{%- for name in names-%}
-	{%- assign aux = forloop.index | plus: newNamesIndex -%}
-	{%- assign nameModified = name -%}
-	{%- assign newName = newNames[aux] -%}
-	{%- assign content = content | replace: nameModified, newName -%}
-	{%- if forloop.last -%}
-		{%- assign newNamesIndex = forloop.length | plus: newNamesIndex -%}
-	{%- endif -%}
+
+{%- comment -%} Замена имён функций {%- endcomment -%}
+{%- for name in js_functions -%}
+	{%- comment -%} Маркируем участки, кода со строками {%- endcomment -%}
+	{%- assign marker = "2e57la4G82XMQr9K" -%}
+	{%- assign aux = marker | append: '"' -%}
+	{%- assign content = content | replace: '"', aux -%}
+	{%- assign aux = marker | append: "'" -%}
+	{%- assign content = content | replace: "'", aux -%}
+	{%- assign aux = marker | append: "`" -%}
+	{%- assign content = content | replace: "`", aux -%}
+	{%- assign contentArray = content | split: marker -%}
+	{%- assign content = "" -%}
+	{%- for part in contentArray -%}
+		{%- assign mod = forloop.index | modulo: 2 -%}
+		{%- if mod == 0 -%}
+			{%- assign partModified = part -%}
+			{%- assign partModified_size = partModified.size -%}
+			{%- for simbol in simbols-%}
+				{%- assign nameModified = name | append: simbol -%}
+				{%- assign newName = newNames[newNamesIndex] | append: simbol -%}
+				{%- assign partModified = partModified | replace: nameModified, newName -%}
+			{%- endfor -%}
+			{%- assign content = content | append: partModified -%}
+		{%- else -%}
+			{%- assign aux = part | slice: 0, 1 -%}
+			{%- if aux == "`" -%} {%- comment -%} Работа со строковыми выражениями типа ${...} {%- endcomment -%}
+				{%- assign partModified = "" -%}
+				{%- assign strExpArray = part | split: "${" -%}
+				{%- if strExpArray.size <= 1 -%}
+					{%- assign content = content | append: part -%}
+				{%- else -%}
+					{%- for strExpPart in strExpArray -%}
+						{%- assign mod = forloop.index | modulo: 2 -%}
+						{%- if mod == 0 -%}
+							{%- assign aux = strExpPart | split: "}" -%}
+							{%- assign expModified =  aux[0] -%}
+							{%- assign endPart = strExpPart | remove: expModified -%}
+							{%- assign expModified_size = expModified.size -%}
+							{%- for simbol in simbols-%}
+								{%- assign nameModified = name | append: simbol -%}
+								{%- assign newName = newNames[newNamesIndex] | append: simbol -%}
+								{%- assign expModified = expModified | replace: nameModified, newName -%}
+							{%- endfor -%}
+							{%- assign partModified = partModified | append: expModified | append: endPart -%}
+						{%- else -%}
+							{%- assign partModified = partModified | append: strExpPart | append: "${" -%}
+						{%- endif -%}
+					{%- endfor -%}
+					{%- assign content = content | append: partModified -%}
+				{%- endif -%}
+			{%- else -%}
+				{%- assign content = content | append: part -%}
+			{%- endif -%}
+		{%- endif -%}
+	{%- endfor -%}
+	{%- assign newNamesIndex = newNamesIndex | plus: 1 -%}
 {%- endfor -%}
 {{ content }}
-{{ newNamesIndex }}
+{%- comment -%} Замена имён констант {%- endcomment -%}
+
+
 
 
 
