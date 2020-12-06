@@ -132,6 +132,9 @@
 	{%- endif -%}
 {%- endfor -%}
 
+{%- assign lsimbols = " #(#|#:#{#&" | split: "#" -%} {%- comment -%} Символы слева от имён функций и переменных {%- endcomment -%}
+{%- assign rsimbols = "(#))#;#}#|#&#=" | split: "#" -%} {%- comment -%} Символы справа от имён функций и переменных {%- endcomment -%}
+
 {%- comment -%} Замена имён функций {%- endcomment -%}
 {%- for name in js_functions -%}
 	{%- comment -%} Маркируем участки, кода со строками {%- endcomment -%}
@@ -149,11 +152,12 @@
 		{%- assign mod = forloop.index | modulo: 2 -%}
 		{%- if mod == 0 -%} {%- comment -%} Не строка {%- endcomment -%}
 			{%- assign partModified = part -%}
-			{%- assign partModified_size = partModified.size -%}
-			{%- for simbol in simbols-%}
-				{%- assign nameModified = name | append: simbol -%}
-				{%- assign newName = newNames[newNamesIndex] | append: simbol -%}
-				{%- assign partModified = partModified | replace: nameModified, newName -%}
+			{%- for ls in lsimbols-%}
+				{%- for rs in rsimbols-%}
+					{%- assign nameModified = name | prepend: ls | append: rs -%}
+					{%- assign newName = newNames[newNamesIndex] | prepend: ls | append: rs -%}
+					{%- assign partModified = partModified | replace: nameModified, newName -%}
+				{%- endfor -%}
 			{%- endfor -%}
 			{%- assign content = content | append: partModified -%}
 		{%- else -%} {%- comment -%} Строка {%- endcomment -%}
@@ -171,12 +175,14 @@
 							{%- assign aux = strExpPart | split: "}" -%}
 							{%- assign expModified =  aux[0] -%}
 							{%- assign endPart = strExpPart | remove: expModified -%}
-							{%- for simbol in simbols-%}
-								{%- assign nameModified = name | append: simbol -%}
-								{%- assign newName = newNames[newNamesIndex] | append: simbol -%}
-								{%- assign expModified = expModified | replace: nameModified, newName -%}
-							{%- endfor -%}
 							{%- assign expModified = expModified | prepend: "${" -%}
+							{%- for ls in lsimbols-%}
+								{%- for rs in rsimbols-%}
+									{%- assign nameModified = name | prepend: ls | append: rs -%}
+									{%- assign newName = newNames[newNamesIndex] | prepend: ls | append: rs -%}
+									{%- assign expModified = expModified | replace: nameModified, newName -%}
+								{%- endfor -%}
+							{%- endfor -%}
 							{%- assign partModified = partModified | append: expModified | append: endPart -%}
 						{%- endif -%}
 					{%- endfor -%}
@@ -192,7 +198,3 @@
 {%- comment -%} Замена имён констант {%- endcomment -%}
 
 {{ content }}
-
-
-
-
