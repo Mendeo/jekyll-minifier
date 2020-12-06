@@ -34,7 +34,7 @@ layout: js_minifier
 	let asd = {
 		foo: "test " + bar.num  ,
 		bar: 'test ' +  baz.num,
-		baz: `test ${bazF(   1,   4)}`
+		baz: `test ${   bazF(   1,   4)   } и вот ещё ${  asd  }`
 	};
 	
 	console.log(asd   );
