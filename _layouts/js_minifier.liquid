@@ -80,7 +80,7 @@
 
 {%- comment -%} Начинаем блок замены имён {%- endcomment -%}
 {%- assign newNames = "a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z" | split: " " -%}
-{%- assign newNamesIndex = 1 -%}
+{%- assign newNamesIndex = 0 -%}
 
 {%- assign forNamesArray = content | split: "function" -%}
 {%- assign js_functions = "" | split: " " -%}
@@ -104,9 +104,10 @@
 	{%- assign content = content | replace: "`", aux -%}
 	{%- assign contentArray = content | split: marker -%}
 	{%- assign content = "" -%}
+	{%- comment -%} Выделяем строки и не строки {%- endcomment -%}
 	{%- for part in contentArray -%}
 		{%- assign mod = forloop.index | modulo: 2 -%}
-		{%- if mod == 0 -%}
+		{%- if mod == 0 -%} {%- comment -%} Не строка {%- endcomment -%}
 			{%- assign partModified = part -%}
 			{%- assign partModified_size = partModified.size -%}
 			{%- for simbol in simbols-%}
@@ -115,17 +116,18 @@
 				{%- assign partModified = partModified | replace: nameModified, newName -%}
 			{%- endfor -%}
 			{%- assign content = content | append: partModified -%}
-		{%- else -%}
+		{%- else -%} {%- comment -%} Строка {%- endcomment -%}
 			{%- assign aux = part | slice: 0, 1 -%}
 			{%- if aux == "`" -%} {%- comment -%} Работа со строковыми выражениями типа ${...} {%- endcomment -%}
-				{%- assign partModified = "" -%}
 				{%- assign strExpArray = part | split: "${" -%}
 				{%- if strExpArray.size <= 1 -%}
 					{%- assign content = content | append: part -%}
 				{%- else -%}
+					{%- assign partModified = "" -%}
 					{%- for strExpPart in strExpArray -%}
-						{%- assign mod = forloop.index | modulo: 2 -%}
-						{%- if mod == 0 -%}
+						{%- if forloop.first -%}
+							{%- assign partModified = partModified | append: strExpPart -%}
+						{%- else -%}
 							{%- assign aux = strExpPart | split: "}" -%}
 							{%- assign expModified =  aux[0] -%}
 							{%- assign endPart = strExpPart | remove: expModified -%}
@@ -135,9 +137,8 @@
 								{%- assign newName = newNames[newNamesIndex] | append: simbol -%}
 								{%- assign expModified = expModified | replace: nameModified, newName -%}
 							{%- endfor -%}
+							{%- assign expModified = expModified | prepend: "${" -%}
 							{%- assign partModified = partModified | append: expModified | append: endPart -%}
-						{%- else -%}
-							{%- assign partModified = partModified | append: strExpPart | append: "${" -%}
 						{%- endif -%}
 					{%- endfor -%}
 					{%- assign content = content | append: partModified -%}
@@ -149,9 +150,9 @@
 	{%- endfor -%}
 	{%- assign newNamesIndex = newNamesIndex | plus: 1 -%}
 {%- endfor -%}
-{{ content }}
 {%- comment -%} Замена имён констант {%- endcomment -%}
 
+{{ content }}
 
 
 
