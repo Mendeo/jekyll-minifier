@@ -20,6 +20,7 @@ layout: js_minifier
 	const addres2 = 'https://example2.com';
 	const str = "I can\'t write this";
 	console.log(str  );
+	var hjk = 28;
 
 	foo = 'Это однострочная строка    /* jfiejff */ function jrt(wer) со спец символами *, ( ) { } тут буквы + ';
 	

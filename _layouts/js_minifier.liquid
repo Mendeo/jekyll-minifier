@@ -43,7 +43,7 @@
 
 {%- assign contentArray = content | split: marker -%}
 {%- assign content = "" -%}
-{%- assign simbols = "= + - / * , % > < : ; ( ) { } [ ]" | split: " " -%} {%- comment -%} Удаляем пробелы вокруг этих символов {%- endcomment -%}
+{%- assign simbols = "=~+~-~/~*~,~%~>~<~:~;~(~)~{~}~[~]~|~&~ " | split: "~" -%} {%- comment -%} Удаляем пробелы вокруг этих символов {%- endcomment -%}
 {%- for part in contentArray -%}
 	{%- assign mod = forloop.index | modulo: 2 -%}
 	{%- if mod == 1 -%} {%- comment -%} Зашли не в строку {%- endcomment -%}
@@ -123,20 +123,53 @@
 {%- assign newNamesIndex = 0 -%}
 
 {%- assign forNamesArray = content | split: "function" -%}
-{%- assign js_functions = "" | split: " " -%}
-{%- for forNamesPart in forNamesArray offset: 2 -%}
+{%- assign js_function = "" | split: " " -%}
+{%- for forNamesPart in forNamesArray offset: 1 -%}
 	{%- assign aux = forNamesPart | slice: 0, 1 -%}
 	{%- if aux != "(" -%}
 		{%- assign name = forNamesPart | replace: "(", " " | truncatewords: 1, "" | append: "2e57la4G82XMQr9K" | split: "2e57la4G82XMQr9K" -%}
-		{%- assign js_functions = js_functions | concat: name -%}
+		{%- assign js_function = js_function | concat: name -%}
 	{%- endif -%}
 {%- endfor -%}
 
-{%- assign lsimbols = " #(#|#:#{#&" | split: "#" -%} {%- comment -%} Символы слева от имён функций и переменных {%- endcomment -%}
-{%- assign rsimbols = "(#))#;#}#|#&#=" | split: "#" -%} {%- comment -%} Символы справа от имён функций и переменных {%- endcomment -%}
+{%- assign forNamesArray = content | split: "let" -%}
+{%- assign js_let = "" | split: " " -%}
+{%- for forNamesPart in forNamesArray offset: 1 -%}
+	{%- assign aux = forNamesPart | slice: 0, 1 -%}
+	{%- if aux == " " -%}
+		{%- assign name = forNamesPart | replace: "=", " " | truncatewords: 1, "" | append: "2e57la4G82XMQr9K" | split: "2e57la4G82XMQr9K" -%}
+		{%- assign js_let = js_let | concat: name -%}
+	{%- endif -%}
+{%- endfor -%}
+
+{%- assign forNamesArray = content | split: "const" -%}
+{%- assign js_const = "" | split: " " -%}
+{%- for forNamesPart in forNamesArray offset: 1 -%}
+	{%- assign aux = forNamesPart | slice: 0, 1 -%}
+	{%- if aux == " " -%}
+		{%- assign name = forNamesPart | replace: "=", " " | truncatewords: 1, "" | append: "2e57la4G82XMQr9K" | split: "2e57la4G82XMQr9K" -%}
+		{%- assign js_const = js_const | concat: name -%}
+	{%- endif -%}
+{%- endfor -%}
+
+{%- assign forNamesArray = content | split: "var" -%}
+{%- assign js_var = "" | split: " " -%}
+{%- for forNamesPart in forNamesArray offset: 1 -%}
+	{%- assign aux = forNamesPart | slice: 0, 1 -%}
+	{%- if aux == " " -%}
+		{%- assign name = forNamesPart | replace: "=", " " | truncatewords: 1, "" | append: "2e57la4G82XMQr9K" | split: "2e57la4G82XMQr9K" -%}
+		{%- assign js_var = js_var | concat: name -%}
+	{%- endif -%}
+{%- endfor -%}
+
+{%- assign js_keys = js_function | concat: js_let | concat: js_const | concat: js_var -%}
+
+{{js_keys | join: "|"}}
+{{"
+"}}
 
 {%- comment -%} Замена имён функций {%- endcomment -%}
-{%- for name in js_functions -%}
+{%- for name in js_keys -%}
 	{%- comment -%} Маркируем участки, кода со строками {%- endcomment -%}
 	{%- assign marker = "2e57la4G82XMQr9K" -%}
 	{%- assign aux = marker | append: '"' -%}
@@ -152,8 +185,8 @@
 		{%- assign mod = forloop.index | modulo: 2 -%}
 		{%- if mod == 0 -%} {%- comment -%} Не строка {%- endcomment -%}
 			{%- assign partModified = part -%}
-			{%- for ls in lsimbols-%}
-				{%- for rs in rsimbols-%}
+			{%- for ls in simbols-%}
+				{%- for rs in simbols-%}
 					{%- assign nameModified = name | prepend: ls | append: rs -%}
 					{%- assign newName = newNames[newNamesIndex] | prepend: ls | append: rs -%}
 					{%- assign partModified = partModified | replace: nameModified, newName -%}
@@ -176,8 +209,8 @@
 							{%- assign expModified =  aux[0] -%}
 							{%- assign endPart = strExpPart | remove: expModified -%}
 							{%- assign expModified = expModified | prepend: "${" -%}
-							{%- for ls in lsimbols-%}
-								{%- for rs in rsimbols-%}
+							{%- for ls in simbols-%}
+								{%- for rs in simbols-%}
 									{%- assign nameModified = name | prepend: ls | append: rs -%}
 									{%- assign newName = newNames[newNamesIndex] | prepend: ls | append: rs -%}
 									{%- assign expModified = expModified | replace: nameModified, newName -%}
