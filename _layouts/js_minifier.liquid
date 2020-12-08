@@ -42,7 +42,7 @@
 {%- assign content = content | replace: "`", aux -%}
 {%- assign contentArray = content | split: marker -%}
 {%- assign content = "" -%}
-{%- assign simbols = "= + - / * , % > < : ; ( ) { } [ ] | & !" | split: " " -%} {%- comment -%} Удаляем пробелы вокруг этих символов {%- endcomment -%}
+{%- assign simbols = "= + - / * , % > < : ; ( ) { } [ ] | & ! ?" | split: " " -%} {%- comment -%} Удаляем пробелы вокруг этих символов {%- endcomment -%}
 {%- for part in contentArray -%}
 	{%- assign mod = forloop.index | modulo: 2 -%}
 	{%- if mod == 1 -%} {%- comment -%} Зашли не в строку {%- endcomment -%}
