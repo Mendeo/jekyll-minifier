@@ -236,21 +236,25 @@
 			{%- assign partModified = "" -%}
 			{%- for var in varArray -%}
 				{%- comment -%} Смотрим символ слева {%- endcomment-%}
-				{%- assign ls = var | slice: 0, 1 -%}
-				{%- assign rs = var | slice: 0, -1 -%}
-				{%- assign flag = false -%}
-				{%- for ab in alphabet -%}
-					{%- if ls == ab or rs == ab -%}
-						{%- assign flag = true -%}
-						{%- break -%}
+				{%- if forloop.last != true -%}
+					{%- assign index_next = forloop.index0 | plus: 1-%}
+					{%- assign var_next = varArray[index_next] -%}
+					{%- assign ls = var | slice: -1, 1 -%}
+					{%- assign rs = var_next | slice: 0, 1 -%}
+					{%- assign flag = false -%}
+					{%- for ab in alphabet -%}
+						{%- if ls == ab or rs == ab -%}
+							{%- assign flag = true -%}
+							{%- break -%}
+						{%- endif -%}
+					{%- endfor -%}
+					{%- if flag == true -%}
+						{%- assign partModified = partModified | append: var | append: name -%}
+					{%- else -%}
+						{%- assign partModified = partModified | append: var | append: newNames[newNamesIndex] -%}
 					{%- endif -%}
-				{%- endfor -%}
-				{{flag}}{{"|"}}
-				{%- if flag == true -%}
-					{%- assign partModified = partModified append: var | append: name -%}
-				{%- else -%}
-					{%- assign partModified = partModified | append: var | append: newNames[newNamesIndex] -%}
 				{%- endif -%}
+				{%- assign partModified = partModified | append: varArray.last -%}
 			{%- endfor -%}
 			{%- assign content = content | append: partModified -%}
 		{%- else -%} {%- comment -%} Строка {%- endcomment -%}
