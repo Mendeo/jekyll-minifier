@@ -214,8 +214,6 @@
 {{"
 "}}
 
-{%- assign js_keys = "ion" | split: " " -%}
-
 {%- comment -%} Замена имён функций и переменных {%- endcomment -%}
 {%- for name in js_keys -%}
 	{%- comment -%} Маркируем участки, кода со строками {%- endcomment -%}
@@ -254,8 +252,8 @@
 						{%- assign partModified = partModified | append: var | append: newNames[newNamesIndex] -%}
 					{%- endif -%}
 				{%- endif -%}
-				{%- assign partModified = partModified | append: varArray.last -%}
 			{%- endfor -%}
+			{%- assign partModified = partModified | append: varArray.last -%}
 			{%- assign content = content | append: partModified -%}
 		{%- else -%} {%- comment -%} Строка {%- endcomment -%}
 			{%- assign content = content | append: part -%}
