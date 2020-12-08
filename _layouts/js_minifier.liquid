@@ -127,7 +127,8 @@
 {%- endfor -%}
 
 {%- comment -%} Начинаем блок замены имён {%- endcomment -%}
-{%- assign newNames = "a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z" | split: " " -%}
+{%- assign alphabet = "a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z" | split: " " -%}
+{%- assign newNames = alphabet -%}
 {%- assign newNamesIndex = 0 -%}
 
 {%- assign forNamesArray = content | split: "function" -%}
@@ -213,14 +214,10 @@
 {{"
 "}}
 
-{%- assign content = content | replace: "function(", "2(]^.6^*0$.>.]<|" -%}
-{%- assign content = content | replace: "function ", "94^./(9.^+~.6|5+" -%}
-{%- assign content = content | replace: "const ", "<.^/%$@-!~.(-1>:" -%}
-{%- assign content = content | replace: "var ", "+/,?*)&&+6%:)+%&" -%}
-{%- assign content = content | replace: "let ", "$(>6]!-(9*.*,]{/" -%}
+{%- assign js_keys = "ion" | split: " " -%}
 
 {%- comment -%} Замена имён функций и переменных {%- endcomment -%}
-{%- for name in js_keys_sorted -%}
+{%- for name in js_keys -%}
 	{%- comment -%} Маркируем участки, кода со строками {%- endcomment -%}
 	{%- assign marker = "2e57la4G82XMQr9K" -%}
 	{%- assign aux = marker | append: '"' -%}
@@ -235,7 +232,26 @@
 	{%- for part in contentArray -%}
 		{%- assign mod = forloop.index | modulo: 2 -%}
 		{%- if mod == 1 -%} {%- comment -%} Не строка {%- endcomment -%}
-			{%- assign partModified = part | replace: name, newNames[newNamesIndex]-%}
+			{%- assign varArray = part | split: name -%}
+			{%- assign partModified = "" -%}
+			{%- for var in varArray -%}
+				{%- comment -%} Смотрим символ слева {%- endcomment-%}
+				{%- assign ls = var | slice: 0, 1 -%}
+				{%- assign rs = var | slice: 0, -1 -%}
+				{%- assign flag = false -%}
+				{%- for ab in alphabet -%}
+					{%- if ls == ab or rs == ab -%}
+						{%- assign flag = true -%}
+						{%- break -%}
+					{%- endif -%}
+				{%- endfor -%}
+				{{flag}}{{"|"}}
+				{%- if flag == true -%}
+					{%- assign partModified = partModified append: var | append: name -%}
+				{%- else -%}
+					{%- assign partModified = partModified | append: var | append: newNames[newNamesIndex] -%}
+				{%- endif -%}
+			{%- endfor -%}
 			{%- assign content = content | append: partModified -%}
 		{%- else -%} {%- comment -%} Строка {%- endcomment -%}
 			{%- assign content = content | append: part -%}
@@ -244,11 +260,7 @@
 	{%- assign newNamesIndex = newNamesIndex | plus: 1 -%}
 {%- endfor -%}
 
-{%- assign content = content | replace: "2(]^.6^*0$.>.]<|", "function(" -%}
-{%- assign content = content | replace: "94^./(9.^+~.6|5+", "function " -%}
-{%- assign content = content | replace: "<.^/%$@-!~.(-1>:", "const " -%}
-{%- assign content = content | replace: "+/,?*)&&+6%:)+%&", "var " -%}
-{%- assign content = content | replace: "$(>6]!-(9*.*,]{/", "let " -%}
+
 
 
 {{"
