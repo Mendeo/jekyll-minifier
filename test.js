@@ -11,7 +11,9 @@ layout: js_minifier
 	let bar = { num: 3 - 2   };
 	let baz = { dfg: foo.test , num: 2 };
 	const arr = [foo, bar, baz];
-	console.log(arr  );
+	var ion = 2 * 2;
+	console.log(arr   + ion);
+	ion = (ion=== 4 ? 3: 2);
 	arr.forEach(s    =>   s.text    =   'Hello "world"');
 		/* Это многострочный
 	комментарий *, ( ) { } // тут буквы + =,

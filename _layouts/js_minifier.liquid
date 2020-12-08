@@ -40,10 +40,9 @@
 {%- assign content = content | replace: "'", aux -%}
 {%- assign aux = marker | append: "`" -%}
 {%- assign content = content | replace: "`", aux -%}
-
 {%- assign contentArray = content | split: marker -%}
 {%- assign content = "" -%}
-{%- assign simbols = "=~+~-~/~*~,~%~>~<~:~;~(~)~{~}~[~]~|~&~ " | split: "~" -%} {%- comment -%} Удаляем пробелы вокруг этих символов {%- endcomment -%}
+{%- assign simbols = "= + - / * , % > < : ; ( ) { } [ ] | & ! ?" | split: " " -%} {%- comment -%} Удаляем пробелы вокруг этих символов {%- endcomment -%}
 {%- for part in contentArray -%}
 	{%- assign mod = forloop.index | modulo: 2 -%}
 	{%- if mod == 1 -%} {%- comment -%} Зашли не в строку {%- endcomment -%}
@@ -69,49 +68,58 @@
 		{%- endfor -%}
 		{%- assign content = content | append: partModified -%}
 	{%- else -%} {%- comment -%} Зашли в строку {%- endcomment -%}
-		
-		{%- assign aux = part | slice: 0, 1 -%}
-		{%- if aux == "`" -%} {%- comment -%} Работа со строковыми выражениями типа ${...} {%- endcomment -%}
-			{%- assign strExpArray = part | split: "${" -%}
-			{%- if strExpArray.size <= 1 -%}
-				{%- assign content = content | append: part -%}
-			{%- else -%}
-				{%- assign partModified = "" -%}
-				{%- for strExpPart in strExpArray -%}
-					{%- if forloop.first -%}
-						{%- assign partModified = partModified | append: strExpPart -%}
-					{%- else -%}
-						{%- assign aux = strExpPart | split: "}" -%}
-						{%- assign expModified =  aux[0] -%}
-						{%- assign endPart = strExpPart | remove: expModified -%}
-						{%- assign expModified_size = expModified | size -%}
-						{%- comment -%} Удаляем двойные пробелы в строковом выражении {%- endcomment -%}
-						{%- for i in (1 .. 100) -%}
-							{%- assign expModified = expModified | remove: "  " -%}
-							{%- if expModified.size == expModified_size -%}
-								{%- break -%}
-							{%- else -%}
-								{%- assign expModified_size = expModified | size -%}
-							{%- endif -%}
-						{%- endfor -%}
-						{%- comment -%} Удаляем пробелы вокруг символов из simbols в строковом выражении {%- endcomment -%}
-						{%- for simbol in simbols-%}
-							{%- assign aux = simbol | append: " " -%}
-							{%- assign expModified = expModified | replace: aux, simbol -%}
-							{%- assign aux = simbol | prepend: " " -%}
-							{%- assign expModified = expModified | replace: aux, simbol -%}
-						{%- endfor -%}
-						{%- assign expModified = expModified | prepend: "${" -%}
-						{%- assign partModified = partModified | append: expModified | append: endPart -%}
-					{%- endif -%}
-				{%- endfor -%}
-				{%- assign content = content | append: partModified -%}
-			{%- endif -%}
-		{%- else -%}
-			{%- assign content = content | append: part -%}
-		{%- endif -%}
+		{%- assign content = content | append: part -%}
 	{%- endif -%}
 {%- endfor -%}
+
+{%- comment -%} Работаем со строковыми выражениями типа ${...} {%- endcomment -%}
+{%- assign contentArray = content | split: "`" -%}
+{%- assign content = "" -%}
+{%- for part in contentArray -%}
+	{%- assign mod = forloop.index | modulo: 2 -%}
+	{%- if mod == 0 -%} {%- comment -%} Зашли в строку {%- endcomment -%}
+		{%- assign strExpArray = part | split: "${" -%}
+		{%- if strExpArray.size <= 1 -%}
+			{%- assign partModified = part | append: "`" | prepend: "`" -%}
+			{%- assign content = content | append: partModified -%}
+		{%- else -%}
+			{%- assign partModified = "" -%}
+			{%- for strExpPart in strExpArray -%}
+				{%- if forloop.first -%}
+					{%- assign partModified = partModified | append: strExpPart -%}
+				{%- else -%}
+					{%- assign aux = strExpPart | split: "}" -%}
+					{%- assign expModified = aux[0] -%}
+					{%- assign endPart = strExpPart | remove: expModified -%}
+					{%- assign expModified = expModified | prepend: "${" -%}
+					{%- assign expModified_size = expModified | size -%}
+					{%- comment -%} Удаляем двойные пробелы в строковом выражении {%- endcomment -%}
+					{%- for i in (1 .. 100) -%}
+						{%- assign expModified = expModified | remove: "  " -%}
+						{%- if expModified.size == expModified_size -%}
+							{%- break -%}
+						{%- else -%}
+							{%- assign expModified_size = expModified | size -%}
+						{%- endif -%}
+					{%- endfor -%}
+					{%- comment -%} Удаляем пробелы вокруг символов из simbols в строковом выражении {%- endcomment -%}
+					{%- for simbol in simbols-%}
+						{%- assign aux = simbol | append: " " -%}
+						{%- assign expModified = expModified | replace: aux, simbol -%}
+						{%- assign aux = simbol | prepend: " " -%}
+						{%- assign expModified = expModified | replace: aux, simbol -%}
+					{%- endfor -%}
+					{%- assign partModified = partModified | append: expModified | append: endPart -%}
+				{%- endif -%}
+			{%- endfor -%}
+			{%- assign partModified = partModified | append: "`" | prepend: "`" -%}
+			{%- assign content = content | append: partModified -%}
+		{%- endif -%}
+	{%- else -%}
+		{%- assign content = content | append: part -%}
+	{%- endif -%}
+{%- endfor -%}
+
 {%- for mask in strMasks -%}
 	{%- assign content = content | replace: mask, "'" -%}
 	{%- assign content = content | replace: mask, '"' -%}
@@ -163,12 +171,17 @@
 {%- endfor -%}
 
 {%- assign js_keys = js_function | concat: js_let | concat: js_const | concat: js_var -%}
-
 {{js_keys | join: "|"}}
 {{"
 "}}
 
-{%- comment -%} Замена имён функций {%- endcomment -%}
+{%- assign content = content | replace: "function(", "2(]^.6^*0$.>.]<|" -%}
+{%- assign content = content | replace: "function ", "94^./(9.^+~.6|5+" -%}
+{%- assign content = content | replace: "const ", "<.^/%$@-!~.(-1>:" -%}
+{%- assign content = content | replace: "var ", "+/,?*)&&+6%:)+%&" -%}
+{%- assign content = content | replace: "let ", "$(>6]!-(9*.*,]{/" -%}
+
+{%- comment -%} Замена имён функций и переменных {%- endcomment -%}
 {%- for name in js_keys -%}
 	{%- comment -%} Маркируем участки, кода со строками {%- endcomment -%}
 	{%- assign marker = "2e57la4G82XMQr9K" -%}
@@ -183,51 +196,23 @@
 	{%- comment -%} Выделяем строки и не строки {%- endcomment -%}
 	{%- for part in contentArray -%}
 		{%- assign mod = forloop.index | modulo: 2 -%}
-		{%- if mod == 0 -%} {%- comment -%} Не строка {%- endcomment -%}
-			{%- assign partModified = part -%}
-			{%- for ls in simbols-%}
-				{%- for rs in simbols-%}
-					{%- assign nameModified = name | prepend: ls | append: rs -%}
-					{%- assign newName = newNames[newNamesIndex] | prepend: ls | append: rs -%}
-					{%- assign partModified = partModified | replace: nameModified, newName -%}
-				{%- endfor -%}
-			{%- endfor -%}
+		{%- if mod == 1 -%} {%- comment -%} Не строка {%- endcomment -%}
+			{%- assign partModified = part | replace: name, newNames[newNamesIndex]-%}
 			{%- assign content = content | append: partModified -%}
 		{%- else -%} {%- comment -%} Строка {%- endcomment -%}
-			{%- assign aux = part | slice: 0, 1 -%}
-			{%- if aux == "`" -%} {%- comment -%} Работа со строковыми выражениями типа ${...} {%- endcomment -%}
-				{%- assign strExpArray = part | split: "${" -%}
-				{%- if strExpArray.size <= 1 -%}
-					{%- assign content = content | append: part -%}
-				{%- else -%}
-					{%- assign partModified = "" -%}
-					{%- for strExpPart in strExpArray -%}
-						{%- if forloop.first -%}
-							{%- assign partModified = partModified | append: strExpPart -%}
-						{%- else -%}
-							{%- assign aux = strExpPart | split: "}" -%}
-							{%- assign expModified =  aux[0] -%}
-							{%- assign endPart = strExpPart | remove: expModified -%}
-							{%- assign expModified = expModified | prepend: "${" -%}
-							{%- for ls in simbols-%}
-								{%- for rs in simbols-%}
-									{%- assign nameModified = name | prepend: ls | append: rs -%}
-									{%- assign newName = newNames[newNamesIndex] | prepend: ls | append: rs -%}
-									{%- assign expModified = expModified | replace: nameModified, newName -%}
-								{%- endfor -%}
-							{%- endfor -%}
-							{%- assign partModified = partModified | append: expModified | append: endPart -%}
-						{%- endif -%}
-					{%- endfor -%}
-					{%- assign content = content | append: partModified -%}
-				{%- endif -%}
-			{%- else -%}
-				{%- assign content = content | append: part -%}
-			{%- endif -%}
+			{%- assign content = content | append: part -%}
 		{%- endif -%}
 	{%- endfor -%}
 	{%- assign newNamesIndex = newNamesIndex | plus: 1 -%}
 {%- endfor -%}
-{%- comment -%} Замена имён констант {%- endcomment -%}
 
+{%- assign content = content | replace: "2(]^.6^*0$.>.]<|", "function(" -%}
+{%- assign content = content | replace: "94^./(9.^+~.6|5+", "function " -%}
+{%- assign content = content | replace: "<.^/%$@-!~.(-1>:", "const " -%}
+{%- assign content = content | replace: "+/,?*)&&+6%:)+%&", "var " -%}
+{%- assign content = content | replace: "$(>6]!-(9*.*,]{/", "let " -%}
+
+
+{{"
+"}}
 {{ content }}
