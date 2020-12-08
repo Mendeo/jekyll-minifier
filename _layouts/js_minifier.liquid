@@ -189,8 +189,11 @@
 {%- assign content = content | replace: "'", aux -%}
 {%- assign aux = marker | append: "`" -%}
 {%- assign content = content | replace: "`", aux -%}
+
 {%- assign contentArray = content | split: marker -%} {%- comment -%} Разбиваем на строки и не строки {%- endcomment -%}
 {%- assign contentArrayNew = "" | split: " " -%}
+
+{%- assign js_keys = "d" | split: "" -%}
 
 {%- comment -%} Выполняем замену не в строковых выражениях {%- endcomment -%}
 {%- for name in js_keys -%}
@@ -207,12 +210,17 @@
 					{%- assign ls = var | slice: -1, 1 -%}
 					{%- assign rs = var_next | slice: 0, 1 -%}
 					{%- assign flag = false -%}
-					{%- for ab in alphabet -%}
-						{%- if ls == ab or rs == ab -%}
-							{%- assign flag = true -%}
-							{%- break -%}
-						{%- endif -%}
-					{%- endfor -%}
+					{%- if ls == " " -%}
+						{{fefefefwfewf}}
+						{%- assign flag = true -%}
+					{%- else -%}
+						{%- for ab in alphabet -%}
+							{%- if ls == ab or rs == ab -%}
+								{%- assign flag = true -%}
+								{%- break -%}
+							{%- endif -%}
+						{%- endfor -%}
+					{%- endif -%}
 					{%- if flag == true -%}
 						{%- assign partModified = partModified | append: var | append: name -%}
 					{%- else -%}
@@ -244,6 +252,8 @@
 {%- endfor -%}
 
 {%- comment -%} Выполняем замену в строковых выражениях {%- endcomment -%}
+{{"
 
+"}}
 {{ content }}
 
