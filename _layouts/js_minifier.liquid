@@ -171,7 +171,45 @@
 {%- endfor -%}
 
 {%- assign js_keys = js_function | concat: js_let | concat: js_const | concat: js_var -%}
-{{js_keys | join: "|"}}
+
+{%- comment -%} Сортируем имена по размеру (длине). Это нужно, чтобы исключить ситуацию, когда одни имена являются частью других {%- endcomment -%}
+{%- assign js_keys_sorted = "" | split: " " -%}
+
+{%- assign name_sizes = "" -%}
+{%- for name in js_keys -%}
+	{%- assign name_sizes = name_sizes | append: name.size -%}
+	{%- if forloop.last != true -%}
+		{%- assign name_sizes = name_sizes | append: " " -%}
+	{%- endif -%}
+{%- endfor -%}
+{%- assign name_sizes = name_sizes | split: " " | uniq -%}
+{%- comment -%} Добавляем нули к числам для сортировки {%- endcomment -%}
+{%- assign name_sizes_numbers = "" | split: " " -%}
+{%- for size in name_sizes -%}
+	{%- assign new_size = size -%}
+	{%- for i in (1 .. 3) -%}
+		{%- if new_size.size < 3 -%}
+			{%- assign new_size = new_size | prepend: "0" -%}
+		{%- else -%}
+			{%- break -%}
+		{%- endif -%}
+	{%- endfor -%}
+	{%- assign new_size = new_size | split: " " -%}
+	{%- assign name_sizes_numbers = name_sizes_numbers | concat: new_size -%}
+{%- endfor -%}
+{%- assign name_sizes = name_sizes_numbers | sort | reverse -%}
+
+{%- for size in name_sizes -%}
+	{%- assign size_number = size | plus: 0 -%} {%- comment -%} Строка в число {%- endcomment -%}
+	{%- for name in js_keys -%}
+		{%- if name.size == size_number -%}
+			{%- assign name_to_array = name | split: " " -%} 
+			{%- assign js_keys_sorted = js_keys_sorted | concat: name_to_array -%}
+		{%- endif -%}
+	{%- endfor -%}
+{%- endfor -%}
+
+{{js_keys_sorted | join: "|"}}
 {{"
 "}}
 
@@ -182,7 +220,7 @@
 {%- assign content = content | replace: "let ", "$(>6]!-(9*.*,]{/" -%}
 
 {%- comment -%} Замена имён функций и переменных {%- endcomment -%}
-{%- for name in js_keys -%}
+{%- for name in js_keys_sorted -%}
 	{%- comment -%} Маркируем участки, кода со строками {%- endcomment -%}
 	{%- assign marker = "2e57la4G82XMQr9K" -%}
 	{%- assign aux = marker | append: '"' -%}

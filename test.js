@@ -14,6 +14,8 @@ layout: js_minifier
 	var ion = 2 * 2;
 	console.log(arr   + ion);
 	ion = (ion=== 4 ? 3: 2);
+	const verylongnameallwillbegood = 12;
+	console.log( ion + verylongnameallwillbegood / ion);
 	arr.forEach(s    =>   s.text    =   'Hello "world"');
 		/* Это многострочный
 	комментарий *, ( ) { } // тут буквы + =,
