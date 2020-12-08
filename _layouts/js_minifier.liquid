@@ -25,7 +25,13 @@
 		{%- assign content = content | append: part -%}
 	{%- endif -%}
 {%- endfor -%}
-
+{%- comment -%} Обрабатываем экранированные символы, обозначающие строки в JS {%- endcomment -%}
+{%- assign strMasks = "dWf4Ay83kQ34n8r0 EM9145U330jDswtN G414z30q4068XB00" | split: " " -%}
+{%- for mask in strMasks -%}
+	{%- assign content = content | replace: "\'", mask -%}
+	{%- assign content = content | replace: '\"', mask -%}
+	{%- assign content = content | replace: "\`", mask -%}
+{%- endfor -%}
 {%- comment -%} Маркируем участки, кода со строками {%- endcomment -%}
 {%- assign marker = "2e57la4G82XMQr9K" -%}
 {%- assign aux = marker | append: '"' -%}
@@ -167,7 +173,6 @@
 
 {%- assign js_keys = js_function | concat: js_let | concat: js_const | concat: js_var -%}
 
-
 {%- comment -%} Обрабатываем экранированные символы, обозначающие строки в JS {%- endcomment -%}
 {%- assign strMasks = "dWf4Ay83kQ34n8r0 EM9145U330jDswtN G414z30q4068XB00" | split: " " -%}
 {%- for mask in strMasks -%}
@@ -236,7 +241,5 @@
 	{%- assign content = content | replace: mask, "`" -%}
 {%- endfor -%}
 
-{{"
-"}}
 {{ content }}
 
