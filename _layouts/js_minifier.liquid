@@ -131,6 +131,7 @@
 {%- assign newNames = alphabet -%}
 {%- assign newNamesIndex = 0 -%}
 
+{%- comment -%} Поиск имён переменных и функций {%- endcomment -%}
 {%- assign forNamesArray = content | split: "function" -%}
 {%- assign js_function = "" | split: " " -%}
 {%- for forNamesPart in forNamesArray offset: 1 -%}
@@ -191,6 +192,7 @@
 {%- assign contentArray = content | split: marker -%} {%- comment -%} Разбиваем на строки и не строки {%- endcomment -%}
 {%- assign contentArrayNew = "" | split: " " -%}
 
+{%- comment -%} Выполняем замену не в строковых выражениях {%- endcomment -%}
 {%- for name in js_keys -%}
 	{%- for part in contentArray -%}
 		{%- assign mod = forloop.index | modulo: 2 -%}
@@ -240,6 +242,8 @@
 	{%- assign content = content | replace: mask, '"' -%}
 	{%- assign content = content | replace: mask, "`" -%}
 {%- endfor -%}
+
+{%- comment -%} Выполняем замену в строковых выражениях {%- endcomment -%}
 
 {{ content }}
 
