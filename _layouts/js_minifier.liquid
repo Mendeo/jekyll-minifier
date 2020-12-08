@@ -25,13 +25,7 @@
 		{%- assign content = content | append: part -%}
 	{%- endif -%}
 {%- endfor -%}
-{%- comment -%} Обрабатываем экранированные символы, обозначающие строки в JS {%- endcomment -%}
-{%- assign strMasks = "dWf4Ay83kQ34n8r0 EM9145U330jDswtN G414z30q4068XB00" | split: " " -%}
-{%- for mask in strMasks -%}
-	{%- assign content = content | replace: "\'", mask -%}
-	{%- assign content = content | replace: '\"', mask -%}
-	{%- assign content = content | replace: "\`", mask -%}
-{%- endfor -%}
+
 {%- comment -%} Маркируем участки, кода со строками {%- endcomment -%}
 {%- assign marker = "2e57la4G82XMQr9K" -%}
 {%- assign aux = marker | append: '"' -%}
@@ -173,60 +167,26 @@
 
 {%- assign js_keys = js_function | concat: js_let | concat: js_const | concat: js_var -%}
 
-{%- comment -%} Сортируем имена по размеру (длине). Это нужно, чтобы исключить ситуацию, когда одни имена являются частью других {%- endcomment -%}
-{%- assign js_keys_sorted = "" | split: " " -%}
 
-{%- assign name_sizes = "" -%}
+{%- comment -%} Обрабатываем экранированные символы, обозначающие строки в JS {%- endcomment -%}
+{%- assign strMasks = "dWf4Ay83kQ34n8r0 EM9145U330jDswtN G414z30q4068XB00" | split: " " -%}
+{%- for mask in strMasks -%}
+	{%- assign content = content | replace: "\'", mask -%}
+	{%- assign content = content | replace: '\"', mask -%}
+	{%- assign content = content | replace: "\`", mask -%}
+{%- endfor -%}
+{%- comment -%} Маркируем участки, кода со строками {%- endcomment -%}
+{%- assign marker = "2e57la4G82XMQr9K" -%}
+{%- assign aux = marker | append: '"' -%}
+{%- assign content = content | replace: '"', aux -%}
+{%- assign aux = marker | append: "'" -%}
+{%- assign content = content | replace: "'", aux -%}
+{%- assign aux = marker | append: "`" -%}
+{%- assign content = content | replace: "`", aux -%}
+{%- assign contentArray = content | split: marker -%} {%- comment -%} Разбиваем на строки и не строки {%- endcomment -%}
+{%- assign contentArrayNew = "" | split: " " -%}
+
 {%- for name in js_keys -%}
-	{%- assign name_sizes = name_sizes | append: name.size -%}
-	{%- if forloop.last != true -%}
-		{%- assign name_sizes = name_sizes | append: " " -%}
-	{%- endif -%}
-{%- endfor -%}
-{%- assign name_sizes = name_sizes | split: " " | uniq -%}
-{%- comment -%} Добавляем нули к числам для сортировки {%- endcomment -%}
-{%- assign name_sizes_numbers = "" | split: " " -%}
-{%- for size in name_sizes -%}
-	{%- assign new_size = size -%}
-	{%- for i in (1 .. 3) -%}
-		{%- if new_size.size < 3 -%}
-			{%- assign new_size = new_size | prepend: "0" -%}
-		{%- else -%}
-			{%- break -%}
-		{%- endif -%}
-	{%- endfor -%}
-	{%- assign new_size = new_size | split: " " -%}
-	{%- assign name_sizes_numbers = name_sizes_numbers | concat: new_size -%}
-{%- endfor -%}
-{%- assign name_sizes = name_sizes_numbers | sort | reverse -%}
-
-{%- for size in name_sizes -%}
-	{%- assign size_number = size | plus: 0 -%} {%- comment -%} Строка в число {%- endcomment -%}
-	{%- for name in js_keys -%}
-		{%- if name.size == size_number -%}
-			{%- assign name_to_array = name | split: " " -%} 
-			{%- assign js_keys_sorted = js_keys_sorted | concat: name_to_array -%}
-		{%- endif -%}
-	{%- endfor -%}
-{%- endfor -%}
-
-{{js_keys_sorted | join: "|"}}
-{{"
-"}}
-
-{%- comment -%} Замена имён функций и переменных {%- endcomment -%}
-{%- for name in js_keys -%}
-	{%- comment -%} Маркируем участки, кода со строками {%- endcomment -%}
-	{%- assign marker = "2e57la4G82XMQr9K" -%}
-	{%- assign aux = marker | append: '"' -%}
-	{%- assign content = content | replace: '"', aux -%}
-	{%- assign aux = marker | append: "'" -%}
-	{%- assign content = content | replace: "'", aux -%}
-	{%- assign aux = marker | append: "`" -%}
-	{%- assign content = content | replace: "`", aux -%}
-	{%- assign contentArray = content | split: marker -%}
-	{%- assign content = "" -%}
-	{%- comment -%} Выделяем строки и не строки {%- endcomment -%}
 	{%- for part in contentArray -%}
 		{%- assign mod = forloop.index | modulo: 2 -%}
 		{%- if mod == 1 -%} {%- comment -%} Не строка {%- endcomment -%}
@@ -253,18 +213,30 @@
 					{%- endif -%}
 				{%- endif -%}
 			{%- endfor -%}
-			{%- assign partModified = partModified | append: varArray.last -%}
-			{%- assign content = content | append: partModified -%}
+			{%- assign partModified = partModified | append: varArray.last | split: "3o7GqQH9353G5Z38" -%}
+			{%- assign contentArrayNew = contentArrayNew | concat: partModified -%}
 		{%- else -%} {%- comment -%} Строка {%- endcomment -%}
-			{%- assign content = content | append: part -%}
+			{%- assign partModified = part | split: "3o7GqQH9353G5Z38" -%}
+			{%- assign contentArrayNew = contentArrayNew | concat: partModified -%}
 		{%- endif -%}
 	{%- endfor -%}
 	{%- assign newNamesIndex = newNamesIndex | plus: 1 -%}
+	{%- assign contentArray = contentArrayNew -%}
+	{%- assign contentArrayNew = "" | split: " " -%}
 {%- endfor -%}
 
+{%- assign content = "" -%}
+{%- for part in contentArray -%}
+	{%- assign content = content | append: part -%}
+{%- endfor -%}
 
-
+{%- for mask in strMasks -%}
+	{%- assign content = content | replace: mask, "'" -%}
+	{%- assign content = content | replace: mask, '"' -%}
+	{%- assign content = content | replace: mask, "`" -%}
+{%- endfor -%}
 
 {{"
 "}}
 {{ content }}
+
