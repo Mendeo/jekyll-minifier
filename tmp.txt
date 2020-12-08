@@ -1,0 +1,39 @@
+			{%- assign partModified_size = partModified.size -%}
+			
+							{%- endfor -%}
+			{%- endfor -%}
+			
+{%- assign name_sizes = "" -%}
+{%- for name in js_keys -%}
+	{%- assign name_sizes = name_sizes | append: name.size -%}
+	{%- if forloop.last != true -%}
+		{%- assign name_sizes = name_sizes | append: " " -%}
+	{%- endif -%}
+{%- endfor -%}
+{%- assign name_sizes = name_sizes | split: " " -%}
+
+
+		{{name}}{{":"}}{{size}}{{"|"}}
+		
+		
+{%- assign content = content | replace: "function(", "2(]^.6^*0$.>.]<|" -%}
+{%- assign content = content | replace: "function ", "94^./(9.^+~.6|5+" -%}
+{%- assign content = content | replace: "const ", "<.^/%$@-!~.(-1>:" -%}
+{%- assign content = content | replace: "var ", "+/,?*)&&+6%:)+%&" -%}
+{%- assign content = content | replace: "let ", "$(>6]!-(9*.*,]{/" -%}
+
+{%- assign content = content | replace: "2(]^.6^*0$.>.]<|", "function(" -%}
+{%- assign content = content | replace: "94^./(9.^+~.6|5+", "function " -%}
+{%- assign content = content | replace: "<.^/%$@-!~.(-1>:", "const " -%}
+{%- assign content = content | replace: "+/,?*)&&+6%:)+%&", "var " -%}
+{%- assign content = content | replace: "$(>6]!-(9*.*,]{/", "let " -%}
+
+			{{"
+"}}{{part}}{{":
+"}}
+					{{var}}{{"::"}}{{ls}}{{"::"}}{{rs}}{{"
+"}}
+
+						{{name}}{{":
+"}}{{var}}{{"
+"}}
