@@ -8,7 +8,9 @@ layout: js_minifier
 {
 	'use strict';
 	//Это обычный комментарий *, ( ) { }  тут буквы + = конец спецсимволов.
-	let foo = {};
+	let foo;
+	сconsole.log(3+1);
+	foo = {efef:"efef"};
 	let bar = { num: 3 - 2   };
 	let baz = { dfg: foo.test , num: 2 };
 	const arr = [foo, bar, baz];
