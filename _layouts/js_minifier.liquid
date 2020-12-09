@@ -1,4 +1,4 @@
-{%- assign replaceNames = false -%}
+{%- assign replaceNames = true -%}
 
 {%- comment -%} Удаляем однострочные комментарии {%- endcomment -%}
 {%- assign contentArray = content | split: "
@@ -183,8 +183,6 @@
 	{%- assign js_keys = "sdf" | split: " " -%}
 
 	{%- for name in js_keys -%}
-		{{name}}{{"|"}}{{newName}}{{"
-"}}
 		{%- comment -%} Выполняем замену не в строковых выражениях {%- endcomment -%}
 		{%- comment -%} Маркируем участки, кода со строками {%- endcomment -%}
 		{%- assign marker = "2e57la4G82XMQr9K" -%}
@@ -248,10 +246,11 @@
 						{%- else -%}
 							{%- assign aux = strExpPart | split: "}" -%}
 							{%- assign expModified = aux[0] -%}
+							{%- assign expModified = expModified | append: "}" -%}
 							{%- assign endPart = strExpPart | remove: expModified -%}
+							{%- assign expModified = expModified | prepend: "${" -%}
 							{%- comment -%} Выдедили строковое выражение ${...} в переменную expModified {%- endcomment -%}
 							{%- assign varArray = expModified | split: name -%}
-							{{expModified}}{{"|"}}
 							{%- assign expModified = "" -%}
 							{%- for var in varArray -%}
 								{%- comment -%} Смотрим символ слева {%- endcomment-%}
@@ -277,7 +276,6 @@
 								{%- assign expModified = expModified | append: newName -%}
 							{%- endfor -%}
 							{%- assign expModified = expModified | append: varArray.last -%}
-							{%- assign expModified = expModified | prepend: "${" -%}
 							{%- assign partModified = partModified | append: expModified | append: endPart -%}
 						{%- endif -%}
 					{%- endfor -%}
@@ -305,9 +303,6 @@
 					{%- assign newName = newName | prepend: alphabet[newNamesIndex2] -%}
 				{%- endif -%}
 		{%- endif -%}
-		{{"
-
-"}}
 	{%- endfor -%}
 {%- endif -%}
 
@@ -317,7 +312,4 @@
 	{%- assign content = content | replace: mask, "`" -%}
 {%- endfor -%}
 
-{{"
-
-"}}
 {{ content }}
