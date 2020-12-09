@@ -237,19 +237,23 @@
 				{%- assign varArray = part | split: name -%}
 				{%- assign partModified = "" -%}
 				{%- for var in varArray -%}
-					{%- comment -%} Смотрим символ слева {%- endcomment-%}
+					{%- comment -%} Смотрим символ слева и справа {%- endcomment-%}
 					{%- if forloop.last != true -%}
 						{%- assign index_next = forloop.index0 | plus: 1-%}
 						{%- assign var_next = varArray[index_next] -%}
 						{%- assign ls = var | slice: -1, 1 -%}
 						{%- assign rs = var_next | slice: 0, 1 -%}
 						{%- assign flag = false -%}
-						{%- for ab in alphabet -%}
-							{%- if ls == ab or rs == ab -%}
-								{%- assign flag = true -%}
-								{%- break -%}
-							{%- endif -%}
-						{%- endfor -%}
+						{%- if ls == "." -%}
+							{%- assign flag = true -%}
+						{%- else -%}
+							{%- for ab in alphabet -%}
+								{%- if ls == ab or rs == ab -%}
+									{%- assign flag = true -%}
+									{%- break -%}
+								{%- endif -%}
+							{%- endfor -%}
+						{%- endif -%}
 						{%- if flag == true -%}
 							{%- assign partModified = partModified | append: var | append: name -%}
 						{%- else -%}
@@ -296,12 +300,16 @@
 									{%- assign ls = var | slice: -1, 1 -%}
 									{%- assign rs = var_next | slice: 0, 1 -%}
 									{%- assign flag = false -%}
-									{%- for ab in alphabet -%}
-										{%- if ls == ab or rs == ab -%}
-											{%- assign flag = true -%}
-											{%- break -%}
-										{%- endif -%}
-									{%- endfor -%}
+									{%- if ls == "." -%}
+										{%- assign flag = true -%}
+									{%- else -%}
+										{%- for ab in alphabet -%}
+											{%- if ls == ab or rs == ab -%}
+												{%- assign flag = true -%}
+												{%- break -%}
+											{%- endif -%}
+										{%- endfor -%}
+									{%- endif -%}
 									{%- if flag == true -%}
 										{%- assign expModified = expModified | append: var | append: name -%}
 									{%- else -%}
