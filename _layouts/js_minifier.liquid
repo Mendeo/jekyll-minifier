@@ -194,15 +194,16 @@
 	{%- assign forNamesArray = content | split: "=>" -%}	
 	{%- for forNamesPart in forNamesArray -%}
 		{%- if forloop.last != true -%}
-			{%- assign aux = forNamesPart | split: ")" -%}
-			{%- assign index = aux.size | minus: 1-%}
-			{%- assign aux = aux[index] -%}
-			{%- assign aux = aux | split: "(" -%}
-			{%- assign index = aux.size | minus: 1-%}
-			{%- assign aux = aux[index] | split: "," -%}
+			{%- assign aux = forNamesPart | split: "(" -%}
+			{%- assign aux = aux.last -%}
+			{%- assign aux = aux | split: ")" -%}
+			{%- assign aux = aux.first -%}
+			{%- assign aux = aux | split: "," -%}
 			{%- assign js_arrow_params = js_arrow_params | concat: aux -%}
 		{%- endif -%}
 	{%- endfor -%}
+
+	{{js_arrow_params | join: "|"}}
 
 	{%- assign js_keys = js_function | concat: js_let | concat: js_const | concat: js_var | concat: js_function_params | concat: js_arrow_params | uniq -%}
 

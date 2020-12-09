@@ -18,7 +18,7 @@ function hlk(hj, er)
 
 function wer(er)
 {
-	return hlk((uio) =>
+	return hlk(uio =>
 	{
 		return asd(3, 4, uio);
 	}, er);
