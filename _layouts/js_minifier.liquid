@@ -178,7 +178,33 @@
 		{%- endif -%}
 	{%- endfor -%}
 
-	{%- assign js_keys = js_function | concat: js_let | concat: js_const | concat: js_var -%}
+	{%- comment -%} Поиск параметров обычных функций {%- endcomment -%}
+	{%- assign js_function_params = "" | split: " " -%}
+	{%- assign forNamesArray = content | split: "function" -%}	
+	{%- for forNamesPart in forNamesArray offset: 1 -%}
+		{%- assign aux = forNamesPart | split: "(" -%}
+		{%- assign aux = aux[1] -%}
+		{%- assign aux = aux | split: ")" -%}
+		{%- assign aux = aux[0] | split: "," -%}
+		{%- assign js_function_params = js_function_params | concat: aux -%}
+	{%- endfor -%}
+
+		{%- comment -%} Поиск параметров стрелочных функций {%- endcomment -%}
+	{%- assign js_arrow_params = "" | split: " " -%}
+	{%- assign forNamesArray = content | split: "=>" -%}	
+	{%- for forNamesPart in forNamesArray -%}
+		{%- if forloop.last != true -%}
+			{%- assign aux = forNamesPart | split: ")" -%}
+			{%- assign index = aux.size | minus: 1-%}
+			{%- assign aux = aux[index] -%}
+			{%- assign aux = aux | split: "(" -%}
+			{%- assign index = aux.size | minus: 1-%}
+			{%- assign aux = aux[index] | split: "," -%}
+			{%- assign js_arrow_params = js_arrow_params | concat: aux -%}
+		{%- endif -%}
+	{%- endfor -%}
+
+	{%- assign js_keys = js_function | concat: js_let | concat: js_const | concat: js_var | concat: js_function_params | concat: js_arrow_params | uniq -%}
 
 	{%- comment -%} Сортируем имена по размеру (длине). Это нужно, чтобы исключить ситуацию, когда заменяем на короткое имя, а потом это короткое имя уже есть в коде и когда заменяем его, то перетераем старую замену {%- endcomment -%}
 	{%- assign js_keys_sorted = "" | split: " " -%}
