@@ -1,19 +1,25 @@
+{%- assign replaceNames = true -%}
+
 {%- comment -%} Удаляем однострочные комментарии {%- endcomment -%}
 {%- assign contentArray = content | split: "
 " -%}
 {%- assign content = "" -%}
 {%- for part in contentArray -%}
+	{%- assign lastSimbol = "
+" -%}
+	{%- if forloop.last -%}
+		{%- assign lastSimbol = "" -%}
+	{%- endif -%}
 	{%- assign aux = part | remove: "://" | split: "//" -%}
 	{%- if aux.size == 2 -%}
 		{%- assign aux = aux[1] | prepend: "//" -%}
 		{%- assign aux = part | remove: aux -%}
-		{%- assign content = content | append: aux | append: "
-" -%}
+		{%- assign content = content | append: aux | append: lastSimbol -%}
 	{%- else -%}
-		{%- assign content = content | append: part | append: "
-" -%}
+		{%- assign content = content | append: part | append: lastSimbol -%}
 	{%- endif -%}
 {%- endfor -%}
+
 {%- comment -%} Удаляем многострочные комментарии {%- endcomment -%}
 {%- assign new_comment_tag = "2e57la4G82XMQr9K" -%}
 {%- assign content = content | replace: "/*", new_comment_tag | replace: "*/", new_comment_tag -%}
@@ -25,6 +31,7 @@
 		{%- assign content = content | append: part -%}
 	{%- endif -%}
 {%- endfor -%}
+
 {%- comment -%} Обрабатываем экранированные символы, обозначающие строки в JS {%- endcomment -%}
 {%- assign strMasks = "dWf4Ay83kQ34n8r0 EM9145U330jDswtN G414z30q4068XB00" | split: " " -%}
 {%- for mask in strMasks -%}
@@ -79,7 +86,7 @@
 	{%- assign mod = forloop.index | modulo: 2 -%}
 	{%- if mod == 0 -%} {%- comment -%} Зашли в строку {%- endcomment -%}
 		{%- assign strExpArray = part | split: "${" -%}
-		{%- if strExpArray.size <= 1 -%}
+		{%- if strExpArray.size <= 1 -%} {%- comment -%} В строке нет выражений типа ${...} {%- endcomment -%}
 			{%- assign partModified = part | append: "`" | prepend: "`" -%}
 			{%- assign content = content | append: partModified -%}
 		{%- else -%}
@@ -90,10 +97,12 @@
 				{%- else -%}
 					{%- assign aux = strExpPart | split: "}" -%}
 					{%- assign expModified = aux[0] -%}
+					{%- assign expModified = expModified | append: "}" -%}
 					{%- assign endPart = strExpPart | remove: expModified -%}
+					{%- comment -%} Выдедили строковое выражение ${...} в переменную expModified {%- endcomment -%}
 					{%- assign expModified = expModified | prepend: "${" -%}
-					{%- assign expModified_size = expModified | size -%}
 					{%- comment -%} Удаляем двойные пробелы в строковом выражении {%- endcomment -%}
+					{%- assign expModified_size = expModified | size -%}
 					{%- for i in (1 .. 100) -%}
 						{%- assign expModified = expModified | remove: "  " -%}
 						{%- if expModified.size == expModified_size -%}
@@ -120,9 +129,256 @@
 	{%- endif -%}
 {%- endfor -%}
 
+{%- comment -%} Начинаем блок замены имён {%- endcomment -%}
+{%- if replaceNames == true -%}
+	{%- assign alphabet = "a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z" | split: " " -%}
+	{%- assign newNamesIndex = 0 -%}
+	{%- assign newNamesIndex1 = -1 -%}
+	{%- assign newNamesIndex2 = -1 -%}
+	{%- assign newName = alphabet[newNamesIndex] -%}
+
+	{%- comment -%} Поиск имён переменных и функций {%- endcomment -%}
+	{%- assign forNamesArray = content | split: "function" -%}
+	{%- assign js_function = "" | split: " " -%}
+	{%- for forNamesPart in forNamesArray offset: 1 -%}
+		{%- assign aux = forNamesPart | slice: 0, 1 -%}
+		{%- if aux != "(" -%}
+			{%- assign name = forNamesPart | replace: "(", " " | truncatewords: 1, "" | append: "2e57la4G82XMQr9K" | split: "2e57la4G82XMQr9K" -%}
+			{%- assign js_function = js_function | concat: name -%}
+		{%- endif -%}
+	{%- endfor -%}
+
+	{%- assign forNamesArray = content | split: "let" -%}
+	{%- assign js_let = "" | split: " " -%}
+	{%- for forNamesPart in forNamesArray offset: 1 -%}
+		{%- assign aux = forNamesPart | slice: 0, 1 -%}
+		{%- if aux == " " -%}
+			{%- assign name = forNamesPart | replace: "=", " " | replace: ";", " " | truncatewords: 1, "" | append: "2e57la4G82XMQr9K" | split: "2e57la4G82XMQr9K" -%}
+			{%- assign js_let = js_let | concat: name -%}
+		{%- endif -%}
+	{%- endfor -%}
+
+	{%- assign forNamesArray = content | split: "const" -%}
+	{%- assign js_const = "" | split: " " -%}
+	{%- for forNamesPart in forNamesArray offset: 1 -%}
+		{%- assign aux = forNamesPart | slice: 0, 1 -%}
+		{%- if aux == " " -%}
+			{%- assign name = forNamesPart | replace: "=", " " | replace: ";", " " | truncatewords: 1, "" | append: "2e57la4G82XMQr9K" | split: "2e57la4G82XMQr9K" -%}
+			{%- assign js_const = js_const | concat: name -%}
+		{%- endif -%}
+	{%- endfor -%}
+
+	{%- assign forNamesArray = content | split: "var" -%}
+	{%- assign js_var = "" | split: " " -%}
+	{%- for forNamesPart in forNamesArray offset: 1 -%}
+		{%- assign aux = forNamesPart | slice: 0, 1 -%}
+		{%- if aux == " " -%}
+			{%- assign name = forNamesPart | replace: "=", " " | replace: ";", " " | truncatewords: 1, "" | append: "2e57la4G82XMQr9K" | split: "2e57la4G82XMQr9K" -%}
+			{%- assign js_var = js_var | concat: name -%}
+		{%- endif -%}
+	{%- endfor -%}
+
+	{%- comment -%} Поиск параметров обычных функций {%- endcomment -%}
+	{%- assign js_function_params = "" | split: " " -%}
+	{%- assign forNamesArray = content | split: "function" -%}	
+	{%- for forNamesPart in forNamesArray offset: 1 -%}
+		{%- assign aux = forNamesPart | split: "(" -%}
+		{%- assign aux = aux[1] -%}
+		{%- assign aux = aux | split: ")" -%}
+		{%- assign aux = aux[0] | split: "," -%}
+		{%- assign js_function_params = js_function_params | concat: aux -%}
+	{%- endfor -%}
+
+		{%- comment -%} Поиск параметров стрелочных функций {%- endcomment -%}
+	{%- assign js_arrow_params = "" | split: " " -%}
+	{%- assign forNamesArray = content | split: "=>" -%}	
+	{%- for forNamesPart in forNamesArray -%}
+		{%- if forloop.last != true -%}
+			{%- assign aux = forNamesPart | split: "(" -%}
+			{%- assign aux = aux.last -%}
+			{%- assign aux = aux | split: ")" -%}
+			{%- assign aux = aux.first -%}
+			{%- assign aux = aux | split: "," -%}
+			{%- assign js_arrow_params = js_arrow_params | concat: aux -%}
+		{%- endif -%}
+	{%- endfor -%}
+
+	{%- assign js_keys = js_function | concat: js_let | concat: js_const | concat: js_var | concat: js_function_params | concat: js_arrow_params | uniq -%}
+
+	{%- comment -%} Сортируем имена по размеру (длине). Это нужно, чтобы исключить ситуацию, когда заменяем на короткое имя, а потом это короткое имя уже есть в коде и когда заменяем его, то перетераем старую замену {%- endcomment -%}
+	{%- assign js_keys_sorted = "" | split: " " -%}
+
+	{%- assign name_sizes = "" -%}
+	{%- for name in js_keys -%}
+		{%- assign name_sizes = name_sizes | append: name.size -%}
+		{%- if forloop.last != true -%}
+			{%- assign name_sizes = name_sizes | append: " " -%}
+		{%- endif -%}
+	{%- endfor -%}
+	{%- assign name_sizes = name_sizes | split: " " | uniq -%}
+	{%- comment -%} Добавляем нули к числам для сортировки {%- endcomment -%}
+	{%- assign name_sizes_numbers = "" | split: " " -%}
+	{%- for size in name_sizes -%}
+		{%- assign new_size = size -%}
+		{%- for i in (1 .. 3) -%}
+			{%- if new_size.size < 3 -%}
+				{%- assign new_size = new_size | prepend: "0" -%}
+			{%- else -%}
+				{%- break -%}
+			{%- endif -%}
+		{%- endfor -%}
+		{%- assign new_size = new_size | split: " " -%}
+		{%- assign name_sizes_numbers = name_sizes_numbers | concat: new_size -%}
+	{%- endfor -%}
+	{%- assign name_sizes = name_sizes_numbers | sort -%}
+
+	{%- for size in name_sizes -%}
+		{%- assign size_number = size | plus: 0 -%} {%- comment -%} Строка в число {%- endcomment -%}
+		{%- for name in js_keys -%}
+			{%- if name.size == size_number -%}
+				{%- assign name_to_array = name | split: " " -%} 
+				{%- assign js_keys_sorted = js_keys_sorted | concat: name_to_array -%}
+			{%- endif -%}
+		{%- endfor -%}
+	{%- endfor -%}
+
+	{%- assign js_keys = js_keys_sorted -%}
+	{%- for name in js_keys -%}
+		{%- comment -%} Выполняем замену не в строковых выражениях {%- endcomment -%}
+		{%- comment -%} Маркируем участки, кода со строками {%- endcomment -%}
+		{%- assign marker = "2e57la4G82XMQr9K" -%}
+		{%- assign aux = marker | append: '"' -%}
+		{%- assign content = content | replace: '"', aux -%}
+		{%- assign aux = marker | append: "'" -%}
+		{%- assign content = content | replace: "'", aux -%}
+		{%- assign aux = marker | append: "`" -%}
+		{%- assign content = content | replace: "`", aux -%}
+		{%- comment -%} Разбиваем на строки и не строки {%- endcomment -%}
+		{%- assign contentArray = content | split: marker -%}
+		{%- assign content = "" -%}
+		{%- for part in contentArray -%}
+			{%- assign mod = forloop.index | modulo: 2 -%}
+			{%- if mod == 1 -%} {%- comment -%} Не строка {%- endcomment -%}
+				{%- assign varArray = part | split: name -%}
+				{%- assign partModified = "" -%}
+				{%- for var in varArray -%}
+					{%- comment -%} Смотрим символ слева и справа {%- endcomment-%}
+					{%- if forloop.last != true -%}
+						{%- assign index_next = forloop.index0 | plus: 1-%}
+						{%- assign var_next = varArray[index_next] -%}
+						{%- assign ls = var | slice: -1, 1 -%}
+						{%- assign rs = var_next | slice: 0, 1 -%}
+						{%- assign flag = false -%}
+						{%- if ls == "." -%}
+							{%- assign flag = true -%}
+						{%- else -%}
+							{%- for ab in alphabet -%}
+								{%- if ls == ab or rs == ab -%}
+									{%- assign flag = true -%}
+									{%- break -%}
+								{%- endif -%}
+							{%- endfor -%}
+						{%- endif -%}
+						{%- if flag == true -%}
+							{%- assign partModified = partModified | append: var | append: name -%}
+						{%- else -%}
+							{%- assign partModified = partModified | append: var | append: newName -%}
+						{%- endif -%}
+					{%- endif -%}
+				{%- endfor -%}
+				{%- assign partModified = partModified | append: varArray.last -%}
+				{%- assign content = content | append: partModified -%}
+			{%- else -%} {%- comment -%} Строка {%- endcomment -%}
+				{%- assign content = content | append: part -%}
+			{%- endif -%}
+		{%- endfor -%}
+
+		{%- comment -%} Выполняем замену в строковых выражениях ${...} {%- endcomment -%}
+		{%- assign contentArray = content | split: "`" -%}
+		{%- assign content = "" -%}
+		{%- for part in contentArray -%}
+			{%- assign mod = forloop.index | modulo: 2 -%}
+			{%- if mod == 0 -%} {%- comment -%} Зашли в строку {%- endcomment -%}
+				{%- assign strExpArray = part | split: "${" -%}
+				{%- if strExpArray.size <= 1 -%} {%- comment -%} В строке нет выражений типа ${...} {%- endcomment -%}
+					{%- assign partModified = part | append: "`" | prepend: "`" -%}
+					{%- assign content = content | append: partModified -%}
+				{%- else -%}
+					{%- assign partModified = "" -%}
+					{%- for strExpPart in strExpArray -%}
+						{%- if forloop.first -%}
+							{%- assign partModified = partModified | append: strExpPart -%}
+						{%- else -%}
+							{%- assign aux = strExpPart | split: "}" -%}
+							{%- assign expModified = aux[0] -%}
+							{%- assign expModified = expModified | append: "}" -%}
+							{%- assign endPart = strExpPart | remove: expModified -%}
+							{%- assign expModified = expModified | prepend: "${" -%}
+							{%- comment -%} Выдедили строковое выражение ${...} в переменную expModified {%- endcomment -%}
+							{%- assign varArray = expModified | split: name -%}
+							{%- assign expModified = "" -%}
+							{%- for var in varArray -%}
+								{%- comment -%} Смотрим символ слева {%- endcomment-%}
+								{%- if forloop.last != true -%}
+									{%- assign index_next = forloop.index0 | plus: 1-%}
+									{%- assign var_next = varArray[index_next] -%}
+									{%- assign ls = var | slice: -1, 1 -%}
+									{%- assign rs = var_next | slice: 0, 1 -%}
+									{%- assign flag = false -%}
+									{%- if ls == "." -%}
+										{%- assign flag = true -%}
+									{%- else -%}
+										{%- for ab in alphabet -%}
+											{%- if ls == ab or rs == ab -%}
+												{%- assign flag = true -%}
+												{%- break -%}
+											{%- endif -%}
+										{%- endfor -%}
+									{%- endif -%}
+									{%- if flag == true -%}
+										{%- assign expModified = expModified | append: var | append: name -%}
+									{%- else -%}
+										{%- assign expModified = expModified | append: var | append: newName -%}
+									{%- endif -%}
+								{%- endif -%}
+							{%- else -%}
+								{%- assign expModified = expModified | append: newName -%}
+							{%- endfor -%}
+							{%- assign expModified = expModified | append: varArray.last -%}
+							{%- assign partModified = partModified | append: expModified | append: endPart -%}
+						{%- endif -%}
+					{%- endfor -%}
+					{%- assign partModified = partModified | append: "`" | prepend: "`" -%}
+					{%- assign content = content | append: partModified -%}
+				{%- endif -%}
+			{%- else -%}
+				{%- assign content = content | append: part -%}
+			{%- endif -%}
+		{%- endfor -%}
+		{%- comment -%} Собираем новое имя. Оно может быть максимум трёхбуквенным (140608 вариантов) {%- endcomment -%}
+		{%- assign newNamesIndex = newNamesIndex | plus: 1 -%}
+		{%- if newNamesIndex == alphabet.size -%}
+			{%- assign newNamesIndex1 = newNamesIndex1 | plus: 1 -%}
+			{%- assign newNamesIndex = 0 -%}
+			{%- if newNamesIndex1 == alphabet.size -%}
+				{%- assign newNamesIndex2 = newNamesIndex2 | plus: 1 -%}
+				{%- assign newNamesIndex1 = 0 -%}
+			{%- endif -%}
+		{%- endif -%}
+		{%- assign newName = alphabet[newNamesIndex] -%}
+		{%- if newNamesIndex1 >= 0 -%}
+			{%- assign newName = newName | prepend: alphabet[newNamesIndex1] -%}
+				{%- if newNamesIndex2 >= 0 -%}
+					{%- assign newName = newName | prepend: alphabet[newNamesIndex2] -%}
+				{%- endif -%}
+		{%- endif -%}
+	{%- endfor -%}
+{%- endif -%}
+
 {%- for mask in strMasks -%}
 	{%- assign content = content | replace: mask, "'" -%}
 	{%- assign content = content | replace: mask, '"' -%}
 	{%- assign content = content | replace: mask, "`" -%}
 {%- endfor -%}
+
 {{ content }}
