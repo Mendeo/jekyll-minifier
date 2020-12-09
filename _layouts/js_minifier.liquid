@@ -180,7 +180,6 @@
 	{%- endfor -%}
 
 	{%- assign js_keys = js_function | concat: js_let | concat: js_const | concat: js_var -%}
-	{%- assign js_keys = "sdf" | split: " " -%}
 
 	{%- for name in js_keys -%}
 		{%- comment -%} Выполняем замену не в строковых выражениях {%- endcomment -%}
