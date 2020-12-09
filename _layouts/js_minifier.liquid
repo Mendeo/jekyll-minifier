@@ -1,4 +1,4 @@
-{%- assign replaceNames = true -%}
+{%- assign replaceNames = false -%}
 
 {%- comment -%} Удаляем однострочные комментарии {%- endcomment -%}
 {%- assign contentArray = content | split: "
@@ -90,6 +90,7 @@
 			{%- assign partModified = part | append: "`" | prepend: "`" -%}
 			{%- assign content = content | append: partModified -%}
 		{%- else -%}
+
 			{%- assign partModified = "" -%}
 			{%- for strExpPart in strExpArray -%}
 				{%- if forloop.first -%}
@@ -97,9 +98,10 @@
 				{%- else -%}
 					{%- assign aux = strExpPart | split: "}" -%}
 					{%- assign expModified = aux[0] -%}
+					{%- assign expModified = expModified | append: "}" -%}
 					{%- assign endPart = strExpPart | remove: expModified -%}
-					{%- assign expModified = expModified | prepend: "${" -%}
 					{%- comment -%} Выдедили строковое выражение ${...} в переменную expModified {%- endcomment -%}
+					{%- assign expModified = expModified | prepend: "${" -%}
 					{%- comment -%} Удаляем двойные пробелы в строковом выражении {%- endcomment -%}
 					{%- assign expModified_size = expModified | size -%}
 					{%- for i in (1 .. 100) -%}
@@ -178,6 +180,7 @@
 	{%- endfor -%}
 
 	{%- assign js_keys = js_function | concat: js_let | concat: js_const | concat: js_var -%}
+	{%- assign js_keys = "sdf" | split: " " -%}
 
 	{%- for name in js_keys -%}
 		{{name}}{{"|"}}{{newName}}{{"
@@ -248,6 +251,7 @@
 							{%- assign endPart = strExpPart | remove: expModified -%}
 							{%- comment -%} Выдедили строковое выражение ${...} в переменную expModified {%- endcomment -%}
 							{%- assign varArray = expModified | split: name -%}
+							{{expModified}}{{"|"}}
 							{%- assign expModified = "" -%}
 							{%- for var in varArray -%}
 								{%- comment -%} Смотрим символ слева {%- endcomment-%}
@@ -301,6 +305,9 @@
 					{%- assign newName = newName | prepend: alphabet[newNamesIndex2] -%}
 				{%- endif -%}
 		{%- endif -%}
+		{{"
+
+"}}
 	{%- endfor -%}
 {%- endif -%}
 

@@ -46,7 +46,7 @@ layout: js_minifier
 	let asd = {
 		foo: "test " + bar.num  ,
 		bar: 'test ' +  baz.num,
-		baz: `test ${bazF(   1,   4)} - это круто, а ${tyu(bazF)} - не очень`
+		baz: `test ${bazF(   1,   4)  } - это круто, а ${tyu(bazF)  } - не очень`
 	};
 
 	function ght(x)
