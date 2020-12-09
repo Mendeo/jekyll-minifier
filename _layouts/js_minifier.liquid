@@ -1,4 +1,4 @@
-{%- assign replaceNames = false -%}
+{%- assign replaceNames = true -%}
 
 {%- comment -%} Удаляем однострочные комментарии {%- endcomment -%}
 {%- assign contentArray = content | split: "
@@ -131,8 +131,10 @@
 {%- comment -%} Начинаем блок замены имён {%- endcomment -%}
 {%- if replaceNames == true -%}
 	{%- assign alphabet = "a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z" | split: " " -%}
-	{%- assign newNames = alphabet -%}
 	{%- assign newNamesIndex = 0 -%}
+	{%- assign newNamesIndex1 = -1 -%}
+	{%- assign newNamesIndex2 = -1 -%}
+	{%- assign newName = alphabet[newNamesIndex] -%}
 
 	{%- comment -%} Поиск имён переменных и функций {%- endcomment -%}
 	{%- assign forNamesArray = content | split: "function" -%}
@@ -178,6 +180,8 @@
 	{%- assign js_keys = js_function | concat: js_let | concat: js_const | concat: js_var -%}
 
 	{%- for name in js_keys -%}
+		{{name}}{{"|"}}{{newName}}{{"
+"}}
 		{%- comment -%} Выполняем замену не в строковых выражениях {%- endcomment -%}
 		{%- comment -%} Маркируем участки, кода со строками {%- endcomment -%}
 		{%- assign marker = "2e57la4G82XMQr9K" -%}
@@ -212,7 +216,7 @@
 						{%- if flag == true -%}
 							{%- assign partModified = partModified | append: var | append: name -%}
 						{%- else -%}
-							{%- assign partModified = partModified | append: var | append: newNames[newNamesIndex] -%}
+							{%- assign partModified = partModified | append: var | append: newName -%}
 						{%- endif -%}
 					{%- endif -%}
 				{%- endfor -%}
@@ -262,11 +266,11 @@
 									{%- if flag == true -%}
 										{%- assign expModified = expModified | append: var | append: name -%}
 									{%- else -%}
-										{%- assign expModified = expModified | append: var | append: newNames[newNamesIndex] -%}
+										{%- assign expModified = expModified | append: var | append: newName -%}
 									{%- endif -%}
 								{%- endif -%}
 							{%- else -%}
-								{%- assign expModified = expModified | append: newNames[newNamesIndex] -%}
+								{%- assign expModified = expModified | append: newName -%}
 							{%- endfor -%}
 							{%- assign expModified = expModified | append: varArray.last -%}
 							{%- assign expModified = expModified | prepend: "${" -%}
@@ -280,7 +284,23 @@
 				{%- assign content = content | append: part -%}
 			{%- endif -%}
 		{%- endfor -%}
+		{%- comment -%} Собираем новое имя. Оно может быть максимум трёхбуквенным (140608 вариантов) {%- endcomment -%}
 		{%- assign newNamesIndex = newNamesIndex | plus: 1 -%}
+		{%- if newNamesIndex == alphabet.size -%}
+			{%- assign newNamesIndex1 = newNamesIndex1 | plus: 1 -%}
+			{%- assign newNamesIndex = 0 -%}
+			{%- if newNamesIndex1 == alphabet.size -%}
+				{%- assign newNamesIndex2 = newNamesIndex2 | plus: 1 -%}
+				{%- assign newNamesIndex1 = 0 -%}
+			{%- endif -%}
+		{%- endif -%}
+		{%- assign newName = alphabet[newNamesIndex] -%}
+		{%- if newNamesIndex1 >= 0 -%}
+			{%- assign newName = newName | prepend: alphabet[newNamesIndex1] -%}
+				{%- if newNamesIndex2 >= 0 -%}
+					{%- assign newName = newName | prepend: alphabet[newNamesIndex2] -%}
+				{%- endif -%}
+		{%- endif -%}
 	{%- endfor -%}
 {%- endif -%}
 
@@ -290,4 +310,7 @@
 	{%- assign content = content | replace: mask, "`" -%}
 {%- endfor -%}
 
+{{"
+
+"}}
 {{ content }}

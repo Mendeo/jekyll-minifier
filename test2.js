@@ -4,4 +4,5 @@ layout: js_minifier
 
 'use strict';
 let days = '123';
-timer.innerHTML = `${days}`;
+const sdf = 133;
+console.log(`${days} ${days + sdf}`);
