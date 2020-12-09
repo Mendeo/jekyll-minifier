@@ -37,3 +37,9 @@
 						{{name}}{{":
 "}}{{var}}{{"
 "}}
+
+{%- assign expModified = expModified | append: "}" -%}
+
+
+		{{name}}{{"|"}}{{newName}}{{"
+"}}
