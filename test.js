@@ -16,7 +16,7 @@ layout: js_minifier
 	console.log(arr   + ion);
 	ion = (ion=== 4 ? 3: 2);
 	const verylongnameallwillbegoodfoobarbaz = 12;
-	console.log( ion + verylongnameallwillbegood / ion);
+	console.log( ion + verylongnameallwillbegoodfoobarbaz / ion);
 	arr.forEach(s    =>   s.text    =   'Hello "world"');
 		/* Это многострочный
 	комментарий *, ( ) { } // тут буквы + =,
@@ -53,7 +53,7 @@ layout: js_minifier
 	{
 		return function (y)
 		{
-			return x + y
+			return `${x + y} ${ion}`;
 		}
 	}
 
