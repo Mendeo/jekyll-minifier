@@ -203,8 +203,6 @@
 		{%- endif -%}
 	{%- endfor -%}
 
-	{{js_arrow_params | join: "|"}}
-
 	{%- assign js_keys = js_function | concat: js_let | concat: js_const | concat: js_var | concat: js_function_params | concat: js_arrow_params | uniq -%}
 
 	{%- comment -%} Сортируем имена по размеру (длине). Это нужно, чтобы исключить ситуацию, когда заменяем на короткое имя, а потом это короткое имя уже есть в коде и когда заменяем его, то перетераем старую замену {%- endcomment -%}
