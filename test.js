@@ -8,8 +8,16 @@ layout: js_minifier
 {
 	'use strict';
 	//Это обычный комментарий *, ( ) { }  тут буквы + = конец спецсимволов.
+	
+	function   bazF  (  x , t)
+	{   
+		return x   + 4   - t /   2;
+	}
+	let a = "qw";
+	console.log(a  );
 	let foo;
-	сconsole.log(3+1);
+	console.log(3+1);
+	if(4 >= 3 && 2 > 1){console.log("Ура!")}
 	foo = {efef:"efef"};
 	let bar = { num: 3 - 2   };
 	let baz = { dfg: foo.test , num: 2 };
@@ -34,12 +42,11 @@ layout: js_minifier
 	foo = `Это многострочный
 	текст, в котором должны *, ( ) { } тут буквы + 
 	сохраниться все переносы и табуляции.`;
-
-	function   bazF  (  x , t)
-	{   
-		return x   + 4   - t /   2;
-	}
 	
+	for (let ii = 0; i < arr.length; i++)
+	{
+		console.log(bazF(i,1));
+	}
 
 	function tyu(fih)
 	{
@@ -58,9 +65,14 @@ layout: js_minifier
 			return `${x + y} ${ion}`;
 		}
 	}
+	function plus(x, y)
+	{
+		return x + y;
+	}
 
 	console.log(asd   );
 	console.log(bazF(   10,   -5));
 	console.log(tyu(bazF));
 	console.log(ght(   10)(   5));
+	console.log(plus(   10  ,   5));
 })();
