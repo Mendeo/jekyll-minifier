@@ -26,6 +26,10 @@ SOFTWARE.
 
 {%- assign replaceNames = true -%}
 
+{%- if page.replace_names == false -%}
+	{%- assign replaceNames = false -%}
+{%- endif -%}
+
 {%- comment -%} Удаляем однострочные комментарии {%- endcomment -%}
 {%- assign contentArray = content | split: "
 " -%}
