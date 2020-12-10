@@ -295,7 +295,7 @@ SOFTWARE.
 						{%- assign ls = var | slice: -1, 1 -%}
 						{%- assign rs = var_next | slice: 0, 1 -%}
 						{%- assign flag = false -%}
-						{%- if ls == "." -%}
+						{%- if ls == "." or rs == ":" -%}
 							{%- assign flag = true -%}
 						{%- else -%}
 							{%- for ab in alphabet -%}
@@ -351,7 +351,7 @@ SOFTWARE.
 									{%- assign ls = var | slice: -1, 1 -%}
 									{%- assign rs = var_next | slice: 0, 1 -%}
 									{%- assign flag = false -%}
-									{%- if ls == "." -%}
+									{%- if ls == "." or rs == ":" -%}
 										{%- assign flag = true -%}
 									{%- else -%}
 										{%- for ab in alphabet -%}
