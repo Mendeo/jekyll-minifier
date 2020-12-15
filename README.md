@@ -43,7 +43,7 @@ let  foo = 3;
 In these examples, there are two spaces after "function" and after "let".
 * If the lines contain unpaired characters " ' " or " " " or " ` ". For example, the following code will not work because of the apostrophe:
 ```javascript
-const str = "I can't write this!";
+const str = "You can't write this!";
 ```
 However, an unpaired character can be escaped. This will still be valid JavaScript, which will work without minification and at the same time minification on it will be successful:
 ```javascript
