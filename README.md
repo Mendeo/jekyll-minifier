@@ -51,7 +51,7 @@ const str = "Don\'t worry about it!";
 ```
 If the characters " ' " or " " " or " ` " are paired in the string, then there will be no problems with minification:
 ```javascript
-const str = 'I can write this: "Hello!".';
+const str = 'You can write this: "Hello!".';
 ```
 * And most **importantly**, the constructs in your code must ends with ";". If you are using a different coding pattern and do not use the ";" symbol, then this minifier will not work for you!
 
