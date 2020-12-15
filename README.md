@@ -47,7 +47,7 @@ const str = "I can't write this!";
 ```
 However, an unpaired character can be escaped. This will still be valid JavaScript, which will work without minification and at the same time minification on it will be successful:
 ```javascript
-const str = "I can\'t write this!";
+const str = "Don\'t worry about it";
 ```
 If the characters " ' " or " " " or " ` " are paired in the string, then there will be no problems with minification:
 ```javascript
