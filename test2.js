@@ -25,4 +25,3 @@ function wer(er)
 }
 console.log(wer(5));
 
-let qw = 1;
