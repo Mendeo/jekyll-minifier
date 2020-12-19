@@ -399,6 +399,8 @@ SOFTWARE.
 		{%- assign newNamesIndexStr = "~!" | append: newNamesIndex | append: "#@" | append: newNamesIndex1 | append: "#@" | append: newNamesIndex2 | append: "!~" -%}
 	{%- endfor -%}
 	{%- assign newNamesIndex = 0 -%}
+	{%- assign newNamesIndex1 = -1 -%}
+	{%- assign newNamesIndex2 = -1 -%}
 	{%- for name in js_keys -%}
 		{%- if newNamesIndex == alphabet.size -%}
 			{%- assign newNamesIndex1 = newNamesIndex1 | plus: 1 -%}
