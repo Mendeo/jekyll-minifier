@@ -54,7 +54,7 @@ If the characters " ' " or " " " or " ` " are paired in the string, then there w
 const str = 'You can write this: "Hello!".';
 ```
 * And most **importantly**, the constructs in your code must ends with ";". If you are using a different coding pattern and do not use the ";" symbol, then this minifier will not work for you!
-* Also, the minifier may not work if the names of your variables, functions or their parameters differ from the Latin symbols and simbols "_" and "$".
+* Also, the minifier may not work if the names of your variables, functions or their parameters differ from the Latin symbols, digits and simbols "_" and "$".
 
 ## How to use
 1. Put html_minifier.liquid and js_minifier.liquid in the _layouts folder of your project. These files are located in the _layouts folder of the repository.
