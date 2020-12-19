@@ -272,7 +272,7 @@ SOFTWARE.
 	{%- assign newNamesIndex = 0 -%}
 	{%- assign newNamesIndex1 = -1 -%}
 	{%- assign newNamesIndex2 = -1 -%}
-	{%- assign newNamesIndexStr = "~0#-1#-1~" -%}
+	{%- assign newNamesIndexStr = "~!0#@-1#@-1!~" -%}
 
 	{%- for name in js_keys -%}
 		{%- comment -%} Выполняем замену не в строковых выражениях {%- endcomment -%}
@@ -396,7 +396,7 @@ SOFTWARE.
 				{%- assign newNamesIndex1 = 0 -%}
 			{%- endif -%}
 		{%- endif -%}
-		{%- assign newNamesIndexStr = "~" | append: newNamesIndex | append: "#" | append: newNamesIndex1 | append: "#" | append: newNamesIndex2 | append: "~" -%}
+		{%- assign newNamesIndexStr = "~!" | append: newNamesIndex | append: "#@" | append: newNamesIndex1 | append: "#@" | append: newNamesIndex2 | append: "!~" -%}
 	{%- endfor -%}
 	{%- assign newNamesIndex = 0 -%}
 	{%- for name in js_keys -%}
@@ -408,7 +408,7 @@ SOFTWARE.
 				{%- assign newNamesIndex1 = 0 -%}
 			{%- endif -%}
 		{%- endif -%}
-		{%- assign newNamesIndexStr = "~" | append: newNamesIndex | append: "#" | append: newNamesIndex1 | append: "#" | append: newNamesIndex2 | append: "~" -%}
+		{%- assign newNamesIndexStr = "~!" | append: newNamesIndex | append: "#@" | append: newNamesIndex1 | append: "#@" | append: newNamesIndex2 | append: "!~" -%}
 		
 		{%- assign newName = alphabet[newNamesIndex] -%}
 		{%- if newNamesIndex1 >= 0 -%}
