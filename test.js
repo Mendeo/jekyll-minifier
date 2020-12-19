@@ -33,8 +33,8 @@ layout: js_minifier
 	в котором должны сохраниться все переносы строк*/
 	const address = "https://example.com";
 	const addres2 = 'https://example2.com';
-	const str = "I can\'t write this";
-	console.log(str  );
+	const str3 = "I can\'t write this";
+	console.log(str3  );
 	var hjk = 28;
 
 	foo = 'Это однострочная строка    /* jfiejff */ function jrt(wer) со спец символами *, ( ) { } тут буквы + ';
@@ -43,7 +43,7 @@ layout: js_minifier
 	текст, в котором должны *, ( ) { } тут буквы + 
 	сохраниться все переносы и табуляции.`;
 	
-	for (let ii = 0; i < arr.length; i++)
+	for (let i = 0; i < arr.length; i++)
 	{
 		console.log(bazF(i,1));
 	}
@@ -55,11 +55,9 @@ layout: js_minifier
 	let asd = {
 		foo: "test " + bar.num  ,
 		bar: 'test ' +  baz.num,
-<<<<<<< HEAD
-		baz: `test ${   bazF(   1,   4)   } и вот ещё ${  asd  }`
-=======
-		baz: `test ${bazF(   1,   4)  } - это круто, а ${tyu(bazF)  } - не очень`
->>>>>>> js-names
+		baz: `test ${   bazF(   1,   4)   } и вот ещё ${  foo  }`,
+		baz2: `test ${bazF(   1,   4)  } - это круто, а ${tyu(bazF)  } - не очень`,
+		qw1: 3
 	};
 
 	function ght(x)
@@ -75,6 +73,8 @@ layout: js_minifier
 	}
 
 	console.log(asd   );
+	console.log(`asd.baz2 = ${asd.baz2  }   `   );
+	console.log(asd.qw   );
 	console.log(bazF(   10,   -5));
 	console.log(tyu(bazF));
 	console.log(ght(   10)(   5));
