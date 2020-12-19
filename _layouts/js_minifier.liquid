@@ -166,7 +166,15 @@ SOFTWARE.
 		{%- assign aux = forNamesPart | slice: 0, 1 -%}
 		{%- if aux != "(" -%}
 			{%- assign name = forNamesPart | replace: "(", " " | truncatewords: 1, "" | append: "2e57la4G82XMQr9K" | split: "2e57la4G82XMQr9K" -%}
-			{%- assign js_function = js_function | concat: name -%}
+			{%- assign aux = name[0]-%}
+			{%- assign name_size = aux | size -%}
+			{%- assign aux = aux | remove: "'" -%}
+			{%- assign aux = aux | remove: "`" -%}
+			{%- assign aux = aux | remove: '"' -%}
+			{%- assign aux = aux | size -%}
+			{%- if aux == name_size -%}
+				{%- assign js_function = js_function | concat: name -%}
+			{%- endif -%}
 		{%- endif -%}
 	{%- endfor -%}
 
@@ -176,7 +184,15 @@ SOFTWARE.
 		{%- assign aux = forNamesPart | slice: 0, 1 -%}
 		{%- if aux == " " -%}
 			{%- assign name = forNamesPart | replace: "=", " " | replace: ";", " " | truncatewords: 1, "" | append: "2e57la4G82XMQr9K" | split: "2e57la4G82XMQr9K" -%}
-			{%- assign js_let = js_let | concat: name -%}
+			{%- assign aux = name[0]-%}
+			{%- assign name_size = aux | size -%}
+			{%- assign aux = aux | remove: "'" -%}
+			{%- assign aux = aux | remove: "`" -%}
+			{%- assign aux = aux | remove: '"' -%}
+			{%- assign aux = aux | size -%}
+			{%- if aux == name_size -%}
+				{%- assign js_let = js_let | concat: name -%}
+			{%- endif -%}
 		{%- endif -%}
 	{%- endfor -%}
 
@@ -186,7 +202,15 @@ SOFTWARE.
 		{%- assign aux = forNamesPart | slice: 0, 1 -%}
 		{%- if aux == " " -%}
 			{%- assign name = forNamesPart | replace: "=", " " | replace: ";", " " | truncatewords: 1, "" | append: "2e57la4G82XMQr9K" | split: "2e57la4G82XMQr9K" -%}
-			{%- assign js_const = js_const | concat: name -%}
+			{%- assign aux = name[0]-%}
+			{%- assign name_size = aux | size -%}
+			{%- assign aux = aux | remove: "'" -%}
+			{%- assign aux = aux | remove: "`" -%}
+			{%- assign aux = aux | remove: '"' -%}
+			{%- assign aux = aux | size -%}
+			{%- if aux == name_size -%}
+				{%- assign js_const = js_const | concat: name -%}
+			{%- endif -%}
 		{%- endif -%}
 	{%- endfor -%}
 
@@ -196,13 +220,21 @@ SOFTWARE.
 		{%- assign aux = forNamesPart | slice: 0, 1 -%}
 		{%- if aux == " " -%}
 			{%- assign name = forNamesPart | replace: "=", " " | replace: ";", " " | truncatewords: 1, "" | append: "2e57la4G82XMQr9K" | split: "2e57la4G82XMQr9K" -%}
-			{%- assign js_var = js_var | concat: name -%}
+			{%- assign aux = name[0]-%}
+			{%- assign name_size = aux | size -%}
+			{%- assign aux = aux | remove: "'" -%}
+			{%- assign aux = aux | remove: "`" -%}
+			{%- assign aux = aux | remove: '"' -%}
+			{%- assign aux = aux | size -%}
+			{%- if aux == name_size -%}
+				{%- assign js_var = js_var | concat: name -%}
+			{%- endif -%}
 		{%- endif -%}
 	{%- endfor -%}
 
 	{%- comment -%} Поиск параметров обычных функций {%- endcomment -%}
 	{%- assign js_function_params = "" | split: " " -%}
-	{%- assign forNamesArray = content | split: "function" -%}	
+	{%- assign forNamesArray = content | split: "function" -%}
 	{%- for forNamesPart in forNamesArray offset: 1 -%}
 		{%- assign aux = forNamesPart | split: "(" -%}
 		{%- assign aux = aux[1] -%}
@@ -211,7 +243,7 @@ SOFTWARE.
 		{%- assign js_function_params = js_function_params | concat: aux -%}
 	{%- endfor -%}
 
-		{%- comment -%} Поиск параметров стрелочных функций {%- endcomment -%}
+	{%- comment -%} Поиск параметров стрелочных функций {%- endcomment -%}
 	{%- assign js_arrow_params = "" | split: " " -%}
 	{%- assign forNamesArray = content | split: "=>" -%}	
 	{%- for forNamesPart in forNamesArray -%}
