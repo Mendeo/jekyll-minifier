@@ -64,11 +64,9 @@ SOFTWARE.
 
 {%- comment -%} Обрабатываем экранированные символы, обозначающие строки в JS {%- endcomment -%}
 {%- assign strMasks = "dWf4Ay83kQ34n8r0 EM9145U330jDswtN G414z30q4068XB00" | split: " " -%}
-{%- for mask in strMasks -%}
-	{%- assign content = content | replace: "\'", mask -%}
-	{%- assign content = content | replace: '\"', mask -%}
-	{%- assign content = content | replace: "\`", mask -%}
-{%- endfor -%}
+{%- assign content = content | replace: "\'", strMasks[0] -%}
+{%- assign content = content | replace: '\"', strMasks[1] -%}
+{%- assign content = content | replace: "\`", strMasks[2] -%}
 {%- comment -%} Маркируем участки, кода со строками {%- endcomment -%}
 {%- assign marker = "2e57la4G82XMQr9K" -%}
 {%- assign aux = marker | append: '"' -%}
@@ -422,10 +420,8 @@ SOFTWARE.
 	{%- endfor -%}
 {%- endif -%}
 
-{%- for mask in strMasks -%}
-	{%- assign content = content | replace: mask, "'" -%}
-	{%- assign content = content | replace: mask, '"' -%}
-	{%- assign content = content | replace: mask, "`" -%}
-{%- endfor -%}
+{%- assign content = content | replace: strMasks[0], "'" -%}
+{%- assign content = content | replace: strMasks[1], '"' -%}
+{%- assign content = content | replace: strMasks[2], "`" -%}
 
 {{ content }}
