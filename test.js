@@ -14,6 +14,8 @@ layout: js_minifier
 		return x   + 4   - t /   2;
 	}
 	let a = "qw";
+	let пр = "Это тест русских символов в имени переменной!";
+	console.log(пр);
 	console.log(a  );
 	let foo;
 	console.log(3+1);
