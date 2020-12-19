@@ -161,12 +161,6 @@ SOFTWARE.
 
 {%- comment -%} Начинаем блок замены имён {%- endcomment -%}
 {%- if replaceNames == true -%}
-	{%- assign alphabet = "a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z" | split: " " -%}
-	{%- assign newNamesIndex = 0 -%}
-	{%- assign newNamesIndex1 = -1 -%}
-	{%- assign newNamesIndex2 = -1 -%}
-	{%- assign newName = alphabet[newNamesIndex] -%}
-
 	{%- comment -%} Поиск имён переменных и функций {%- endcomment -%}
 	{%- assign forNamesArray = content | split: "function" -%}
 	{%- assign js_function = "" | split: " " -%}
@@ -235,7 +229,7 @@ SOFTWARE.
 
 	{%- assign js_keys = js_function | concat: js_let | concat: js_const | concat: js_var | concat: js_function_params | concat: js_arrow_params | uniq -%}
 
-	{%- comment -%} Сортируем имена по размеру (длине). Это нужно, чтобы исключить ситуацию, когда заменяем на короткое имя, а потом это короткое имя уже есть в коде и когда заменяем его, то перетераем старую замену {%- endcomment -%}
+	{%- comment -%} Сортируем имена по размеру (длине), чтобы исключить случаи, когда существующее имя содержит часть другого более короткого имени {%- endcomment -%}
 	{%- assign js_keys_sorted = "" | split: " " -%}
 
 	{%- assign name_sizes = "" -%}
@@ -272,7 +266,14 @@ SOFTWARE.
 		{%- endfor -%}
 	{%- endfor -%}
 
-	{%- assign js_keys = js_keys_sorted -%}
+	{%- assign js_keys = js_keys_sorted | reverse -%}
+	
+	{%- assign alphabet = "a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z" | split: " " -%}
+	{%- assign newNamesIndex = 0 -%}
+	{%- assign newNamesIndex1 = -1 -%}
+	{%- assign newNamesIndex2 = -1 -%}
+	{%- assign newNamesIndexStr = "~0#-1#-1~" -%}
+
 	{%- for name in js_keys -%}
 		{%- comment -%} Выполняем замену не в строковых выражениях {%- endcomment -%}
 		{%- comment -%} Маркируем участки, кода со строками {%- endcomment -%}
@@ -312,7 +313,7 @@ SOFTWARE.
 						{%- if flag == true -%}
 							{%- assign partModified = partModified | append: var | append: name -%}
 						{%- else -%}
-							{%- assign partModified = partModified | append: var | append: newName -%}
+							{%- assign partModified = partModified | append: var | append: newNamesIndexStr -%}
 						{%- endif -%}
 					{%- endif -%}
 				{%- endfor -%}
@@ -368,11 +369,11 @@ SOFTWARE.
 									{%- if flag == true -%}
 										{%- assign expModified = expModified | append: var | append: name -%}
 									{%- else -%}
-										{%- assign expModified = expModified | append: var | append: newName -%}
+										{%- assign expModified = expModified | append: var | append: newNamesIndexStr -%}
 									{%- endif -%}
 								{%- endif -%}
 							{%- else -%}
-								{%- assign expModified = expModified | append: newName -%}
+								{%- assign expModified = expModified | append: newNamesIndexStr -%}
 							{%- endfor -%}
 							{%- assign expModified = expModified | append: varArray.last -%}
 							{%- assign partModified = partModified | append: expModified | append: endPart -%}
@@ -395,15 +396,32 @@ SOFTWARE.
 				{%- assign newNamesIndex1 = 0 -%}
 			{%- endif -%}
 		{%- endif -%}
-		{%- assign newName = alphabet[newNamesIndex] -%}
-		{%- if newNamesIndex1 >= 0 -%}
-			{%- assign newName = newName | prepend: alphabet[newNamesIndex1] -%}
-				{%- if newNamesIndex2 >= 0 -%}
-					{%- assign newName = newName | prepend: alphabet[newNamesIndex2] -%}
-				{%- endif -%}
-		{%- endif -%}
+		{%- assign newNamesIndexStr = "~" | append: newNamesIndex | append: "#" | append: newNamesIndex1 | append: "#" | append: newNamesIndex2 | append: "~" -%}
 	{%- endfor -%}
 {%- endif -%}
+
+{%- assign newNamesIndex = 0 -%}
+{%- for name in js_keys -%}
+	{%- if newNamesIndex == alphabet.size -%}
+		{%- assign newNamesIndex1 = newNamesIndex1 | plus: 1 -%}
+		{%- assign newNamesIndex = 0 -%}
+		{%- if newNamesIndex1 == alphabet.size -%}
+			{%- assign newNamesIndex2 = newNamesIndex2 | plus: 1 -%}
+			{%- assign newNamesIndex1 = 0 -%}
+		{%- endif -%}
+	{%- endif -%}
+	{%- assign newNamesIndexStr = "~" | append: newNamesIndex | append: "#" | append: newNamesIndex1 | append: "#" | append: newNamesIndex2 | append: "~" -%}
+	
+	{%- assign newName = alphabet[newNamesIndex] -%}
+	{%- if newNamesIndex1 >= 0 -%}
+		{%- assign newName = newName | prepend: alphabet[newNamesIndex1] -%}
+			{%- if newNamesIndex2 >= 0 -%}
+				{%- assign newName = newName | prepend: alphabet[newNamesIndex2] -%}
+			{%- endif -%}
+	{%- endif -%}
+	{%- assign content = content | replace: newNamesIndexStr, newName -%}
+	{%- assign newNamesIndex = newNamesIndex | plus: 1 -%}
+{%- endfor -%}
 
 {%- for mask in strMasks -%}
 	{%- assign content = content | replace: mask, "'" -%}
