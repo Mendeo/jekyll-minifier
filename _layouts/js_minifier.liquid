@@ -396,32 +396,31 @@ SOFTWARE.
 				{%- assign newNamesIndex1 = 0 -%}
 			{%- endif -%}
 		{%- endif -%}
-		{%- assign newNamesIndexStr = "~" | append: newNamesIndex | append: "#" | append: newNamesIndex1 | append: "#" | append: newNamesIndex2 | append: "~" -%}
+		{%- assign newNamesIndexStr = "~!" | append: newNamesIndex | append: "@#" | append: newNamesIndex1 | append: "@#" | append: newNamesIndex2 | append: "!~" -%}
+	{%- endfor -%}
+	{%- assign newNamesIndex = 0 -%}
+	{%- for name in js_keys -%}
+		{%- if newNamesIndex == alphabet.size -%}
+			{%- assign newNamesIndex1 = newNamesIndex1 | plus: 1 -%}
+			{%- assign newNamesIndex = 0 -%}
+			{%- if newNamesIndex1 == alphabet.size -%}
+				{%- assign newNamesIndex2 = newNamesIndex2 | plus: 1 -%}
+				{%- assign newNamesIndex1 = 0 -%}
+			{%- endif -%}
+		{%- endif -%}
+		{%- assign newNamesIndexStr = "~!" | append: newNamesIndex | append: "@#" | append: newNamesIndex1 | append: "@#" | append: newNamesIndex2 | append: "!~" -%}
+		
+		{%- assign newName = alphabet[newNamesIndex] -%}
+		{%- if newNamesIndex1 >= 0 -%}
+			{%- assign newName = newName | prepend: alphabet[newNamesIndex1] -%}
+				{%- if newNamesIndex2 >= 0 -%}
+					{%- assign newName = newName | prepend: alphabet[newNamesIndex2] -%}
+				{%- endif -%}
+		{%- endif -%}
+		{%- assign content = content | replace: newNamesIndexStr, newName -%}
+		{%- assign newNamesIndex = newNamesIndex | plus: 1 -%}
 	{%- endfor -%}
 {%- endif -%}
-
-{%- assign newNamesIndex = 0 -%}
-{%- for name in js_keys -%}
-	{%- if newNamesIndex == alphabet.size -%}
-		{%- assign newNamesIndex1 = newNamesIndex1 | plus: 1 -%}
-		{%- assign newNamesIndex = 0 -%}
-		{%- if newNamesIndex1 == alphabet.size -%}
-			{%- assign newNamesIndex2 = newNamesIndex2 | plus: 1 -%}
-			{%- assign newNamesIndex1 = 0 -%}
-		{%- endif -%}
-	{%- endif -%}
-	{%- assign newNamesIndexStr = "~" | append: newNamesIndex | append: "#" | append: newNamesIndex1 | append: "#" | append: newNamesIndex2 | append: "~" -%}
-	
-	{%- assign newName = alphabet[newNamesIndex] -%}
-	{%- if newNamesIndex1 >= 0 -%}
-		{%- assign newName = newName | prepend: alphabet[newNamesIndex1] -%}
-			{%- if newNamesIndex2 >= 0 -%}
-				{%- assign newName = newName | prepend: alphabet[newNamesIndex2] -%}
-			{%- endif -%}
-	{%- endif -%}
-	{%- assign content = content | replace: newNamesIndexStr, newName -%}
-	{%- assign newNamesIndex = newNamesIndex | plus: 1 -%}
-{%- endfor -%}
 
 {%- for mask in strMasks -%}
 	{%- assign content = content | replace: mask, "'" -%}
