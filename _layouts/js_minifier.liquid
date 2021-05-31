@@ -332,7 +332,7 @@ SOFTWARE.
 						{%- assign ls = var | slice: -1, 1 -%}
 						{%- assign rs = var_next | slice: 0, 1 -%}
 						{%- assign flag = false -%}
-						{%- if ls == "." or rs == ":" -%}
+						{%- if ls == "." or rs == ":" and ls == "{" or ls == "," -%} {%- comment -%} Для ":" исключаем случай тренарного оператора{%- endcomment-%}
 							{%- assign flag = true -%}
 						{%- else -%}
 							{%- for ab in fullAlphabet -%}
