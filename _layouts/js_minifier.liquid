@@ -256,14 +256,12 @@ SOFTWARE.
 				{%- assign aux = aux.first -%}
 				{%- assign aux = aux | split: "," -%}
 			{%- else -%}
-				{%- assign aux = "" -%}
 				{%- for i in (1..256) -%}
 					{%- assign neg_i = 0 | minus: i-%}
 					{%- assign s = forNamesPart | slice: neg_i -%}
 					{%- if i > forNamesPart.size or s == "," or s == '=' or s == '(' or s == ";" -%}
 						{%- assign startIndex = neg_i | plus: 1 -%}
 						{%- assign aux = forNamesPart | slice: startIndex, i | split: ";" -%}
-						{%- assign aux[0] = arrowVar -%}
 						{%- break -%}
 					{%- endif -%}
 				{%- endfor -%}
