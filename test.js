@@ -8,11 +8,11 @@ layout: js_minifier
 {
 	'use strict';
 	//Это обычный комментарий *, ( ) { }  тут буквы + = конец спецсимволов.
-	
 	function   bazF  (  x , t)
 	{   
 		return x   + 4   - t /   2;
 	}
+	var arrowF = str => +str.replace(/q/g, 'w');
 	let a = "qw";
 	let пр = "Это тест русских символов в имени переменной!";
 	console.log(пр);
